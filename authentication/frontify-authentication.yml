@@ -1,0 +1,35 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  https://developer.frontify.com/ (GraphQL API + authentication docs) +
+  npm @frontify/frontify-authenticator + github.com/Frontify/mcp-servers
+docs: https://developer.frontify.com/d/XFPcrX4jz6V8/graphql-api
+summary:
+  types: [oauth2, apiKey]
+  api_key_in: [header]
+  oauth2_flows: [authorizationCode]
+  note: >-
+    Derived from documentation and the official Frontify Authenticator package
+    rather than an OpenAPI spec (Frontify's public API is GraphQL; no OpenAPI is
+    published). Scope strings are intentionally not enumerated here — the exact
+    scope reference is behind the SPA developer portal and was not verified in
+    this pass, so no scopes/ artifact is asserted.
+schemes:
+  - name: OAuth2 (Authorization Code)
+    type: oauth2
+    flow: authorizationCode
+    description: >-
+      Interactive OAuth 2.0 authorization against a user's Frontify instance —
+      used by the Frontify Authenticator, Finder, and the hosted MCP server
+      (which follows the MCP authorization spec with CIMD and Dynamic Client
+      Registration). Authorization/token endpoints are instance-scoped
+      (https://{instance}.frontify.com).
+    sources: [developer.frontify.com, "@frontify/frontify-authenticator", github.com/Frontify/mcp-servers]
+  - name: API Token (Bearer)
+    type: apiKey
+    in: header
+    parameter: Authorization
+    description: >-
+      Personal / API access tokens generated per Frontify instance are sent as a
+      Bearer token when calling the GraphQL API directly (server-to-server).
+    sources: [developer.frontify.com]
