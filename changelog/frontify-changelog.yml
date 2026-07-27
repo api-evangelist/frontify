@@ -1,0 +1,12 @@
+generated: '2026-07-19'
+method: searched
+source: https://developer.frontify.com/changelog
+url: https://developer.frontify.com/changelog
+scheme: dated-changelog
+description: >-
+  Frontify publishes a dated developer changelog for the GraphQL API and
+  developer platform at developer.frontify.com/changelog. The page is
+  SPA-rendered; the live URL is the source of truth. No individual dated entries
+  were captured verbatim in this pass (no fabrication) — the pointer records the
+  changelog surface's presence and location.
+entries: []

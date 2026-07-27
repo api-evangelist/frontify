@@ -1,0 +1,55 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  github.com/Frontify (brand-sdk, fondue, frontify-finder, extensions) + npm
+  @frontify scope + https://developer.frontify.com/d/xJoA5nhTq1AT/brand-sdk
+description: >-
+  Frontify ships a client-side / embeddable component surface for integrating
+  brand assets and building on-platform experiences, distinct from the
+  server-side GraphQL API. Grouped by family below.
+families:
+  - name: Brand SDK — App Bridge
+    kind: app-integration-sdk
+    summary: >-
+      SDK for building Content Blocks and Platform Apps that run inside Frontify.
+      Establishes communication between an app and the Frontify platform,
+      handling requests to the Frontify API, authentication, and app data.
+    loaders:
+      - "@frontify/app-bridge"
+      - "@frontify/app-bridge-app"
+      - "@frontify/app-bridge-theme"
+    docs: https://developer.frontify.com/d/xJoA5nhTq1AT/brand-sdk
+  - name: Frontify Finder
+    kind: embeddable-asset-picker
+    summary: >-
+      Embeddable component that authenticates a user to their Frontify instance
+      and lets them search and select assets from any secure web app — the
+      canonical way to pull Frontify DAM assets into an external UI.
+    loaders:
+      - "@frontify/frontify-finder"
+      - "@frontify/frontify-authenticator"
+    docs: https://developer.frontify.com/d/xJoA5nhTq1AT/finder
+  - name: Frontify Uploader
+    kind: embeddable-upload-widget
+    summary: Component that lets end users upload assets into a Frontify instance from an external surface.
+    loaders:
+      - "@frontify/frontify-uploader"
+  - name: Fondue design system
+    kind: react-component-library
+    summary: >-
+      Frontify's open design system — React components, icons, and design
+      tokens used across Frontify-branded applications and available for building
+      on-brand app UIs.
+    loaders:
+      - "@frontify/fondue"
+      - "@frontify/fondue-sdk"
+      - "@frontify/fondue-tokens"
+    repo: https://github.com/Frontify/fondue
+  - name: Content Blocks / UI Extensions
+    kind: platform-extension
+    summary: >-
+      Custom guideline blocks and UI extensions authored with the UI Extensions
+      SDK and served/deployed via the Frontify CLI; sample library in
+      Frontify/extensions.
+    repo: https://github.com/Frontify/extensions
+    docs: https://developer.frontify.com/d/xJoA5nhTq1AT/content-blocks

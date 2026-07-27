@@ -1,0 +1,24 @@
+generated: '2026-07-19'
+method: searched
+probe: true
+source: https://trust.frontify.com/
+url: https://trust.frontify.com/
+certifications:
+- SOC 2
+- ISO 27001
+- ISO 27017
+- ISO 27018
+- HIPAA
+- FedRAMP
+- GDPR
+- CSA STAR
+evidence:
+- source: https://trust.frontify.com/
+  keywords:
+  - soc 2
+  - soc2
+  - hipaa
+  - fedramp
+  - trust center
+  - gdpr
+  - csa star

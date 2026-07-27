@@ -1,0 +1,28 @@
+generated: '2026-07-19'
+method: searched
+description: >-
+  Probe of the /.well-known/ discovery surface for the Frontify web + developer
+  hosts. The marketing host (www.frontify.com) returns 404 for every probed
+  path. The developer host (developer.frontify.com) is a single-page app that
+  answers 200 with an identical ~8.9KB HTML shell for arbitrary paths, so its
+  200s are recorded as present-but-not-a-real-document (not saved). No real
+  well-known document (security.txt, OIDC, oauth-authorization-server,
+  api-catalog, ai-plugin) was found — no pointer is wired.
+hosts:
+  - host: https://www.frontify.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+  - host: https://developer.frontify.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        note: SPA HTML shell, not a real RFC 9116 security.txt — not saved.

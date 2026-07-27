@@ -1,8 +1,17 @@
 aid: frontify
 name: Frontify
-description: 'Frontify is a company surfaced as a portfolio company of eqt-ventures and added to the API
-  Evangelist network as a stub for enrichment. Sector: marketing. This profile is a lead awaiting the
-  enrichment pipeline.'
+description: >-
+  Frontify is a brand management and digital asset management (DAM) platform that
+  gives teams a single, governed home for brand guidelines, logos, images, video,
+  templates, and creative workflows. Its public developer surface is a per-instance
+  GraphQL API (https://{instance}.frontify.com/graphql) for discovering brands,
+  searching and retrieving assets, managing metadata, collaborating, browsing
+  guidelines, exporting creative templates, and automating creative workflows, plus
+  a Brand SDK (App Bridge, Frontify Finder, Frontify CLI) for building Content Blocks
+  and Platform Apps, an official hosted MCP server for AI assistants, and a curated
+  Agent Skills catalog. Frontify was added to the API Evangelist network as a
+  portfolio company of EQT Ventures and enriched here from its public developer,
+  package, and trust surfaces.
 url: https://raw.githubusercontent.com/api-evangelist/frontify/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -10,18 +19,109 @@ x-backed-by:
 - eqt-ventures
 x-tier: stub
 x-tier-reason: portfolio-lead
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-19'
+image: https://www.frontify.com/favicon.ico
 tags:
 - Company
 - Marketing
-apis: []
+- Brand Management
+- Digital Asset Management
+- DAM
+- Content
+- GraphQL
+- Creative Operations
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- name: Frontify GraphQL API
+  description: >-
+    Per-instance GraphQL API for the Frontify brand management / DAM platform —
+    discover brands, search and retrieve assets, manage metadata, collaborate on
+    comments/annotations, browse guidelines, export creative templates, and
+    automate workflows.
+  humanURL: https://developer.frontify.com/
+  baseURL: https://developer.frontify.com/graphql
+  properties:
+  - type: Documentation
+    url: https://developer.frontify.com/
+  - type: APIReference
+    url: https://developer.frontify.com/reference
+  - type: Authentication
+    url: authentication/frontify-authentication.yml
+  - type: Conventions
+    url: conventions/frontify-conventions.yml
 common:
 - type: Website
   url: https://www.frontify.com/
+- type: DeveloperPortal
+  url: https://developer.frontify.com/
+- type: Documentation
+  url: https://developer.frontify.com/
+- type: APIReference
+  url: https://developer.frontify.com/reference
+- type: Support
+  url: https://help.frontify.com/
+- type: Blog
+  url: https://www.frontify.com/en/resources/blog/
+- type: GitHubOrganization
+  url: https://github.com/Frontify
+- type: Pricing
+  url: https://www.frontify.com/en/pricing/
+- type: Login
+  url: https://app.frontify.com/
+- type: TermsOfService
+  url: https://www.frontify.com/en/legal/terms-of-service/
+- type: PrivacyPolicy
+  url: https://www.frontify.com/en/legal/privacy-notice/
+- type: StatusPage
+  url: https://status.frontify.com/
+- type: TrustCenter
+  url: security/frontify-trust-center.yml
+- type: Compliance
+  url: https://trust.frontify.com/
+- type: Packages
+  url: packages/frontify-packages.yml
+- type: SDKs
+  url: packages/frontify-packages.yml
+- type: CLI
+  url: cli/frontify-cli.yml
+- type: MCPServer
+  url: mcp/frontify-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Components
+  url: components/frontify-components.yml
+- type: Authentication
+  url: authentication/frontify-authentication.yml
+- type: Conventions
+  url: conventions/frontify-conventions.yml
+- type: Conformance
+  url: conformance/frontify-conformance.yml
+- type: Lifecycle
+  url: lifecycle/frontify-lifecycle.yml
+- type: ChangeLog
+  url: changelog/frontify-changelog.yml
+- type: DomainSecurity
+  url: security/frontify-domain-security.yml
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence

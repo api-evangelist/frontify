@@ -1,0 +1,106 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  npm registry search + the official Frontify GitHub organization
+  (github.com/Frontify). Only packages published under the @frontify npm scope
+  (publisher frontify-dev / Frontify GitHub Actions) or from a Frontify-owned
+  repository are marked official: true.
+packages:
+  - language: javascript
+    registry: npm
+    name: "@frontify/frontify-finder"
+    url: https://www.npmjs.com/package/@frontify/frontify-finder
+    install: npm install @frontify/frontify-finder
+    version: 3.0.1
+    description: Authenticate, search and access Frontify assets data from any secure web app.
+    repo: https://github.com/Frontify/frontify-finder
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/frontify-authenticator"
+    url: https://www.npmjs.com/package/@frontify/frontify-authenticator
+    install: npm install @frontify/frontify-authenticator
+    version: 2.0.1
+    description: Authenticate to your Frontify instance from within any secure web app.
+    repo: https://github.com/Frontify/frontify-authenticator
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/app-bridge"
+    url: https://www.npmjs.com/package/@frontify/app-bridge
+    install: npm install @frontify/app-bridge
+    version: 3.12.10
+    description: SDK to establish communication between a marketplace app and the Frontify platform.
+    repo: https://github.com/Frontify/brand-sdk
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/app-bridge-app"
+    url: https://www.npmjs.com/package/@frontify/app-bridge-app
+    install: npm install @frontify/app-bridge-app
+    description: App Bridge package for Frontify Platform Apps.
+    repo: https://github.com/Frontify/brand-sdk
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/app-bridge-theme"
+    url: https://www.npmjs.com/package/@frontify/app-bridge-theme
+    install: npm install @frontify/app-bridge-theme
+    description: App Bridge package to establish communication between Frontify and themes.
+    repo: https://github.com/Frontify/brand-sdk
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/fondue"
+    url: https://www.npmjs.com/package/@frontify/fondue
+    install: npm install @frontify/fondue
+    version: 13.7.2
+    description: Fondue, the design system of Frontify (React component library).
+    repo: https://github.com/Frontify/fondue
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/fondue-sdk"
+    url: https://www.npmjs.com/package/@frontify/fondue-sdk
+    install: npm install @frontify/fondue-sdk
+    description: Machine-readable SDK for Frontify Fondue — components, icons, tokens.
+    repo: https://github.com/Frontify/fondue
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/frontify-uploader"
+    url: https://www.npmjs.com/package/@frontify/frontify-uploader
+    install: npm install @frontify/frontify-uploader
+    version: 1.7.1
+    description: Tool that allows users to upload assets to a Frontify instance.
+    official: true
+  - language: typescript
+    registry: npm
+    name: "@frontify/frontify-cli"
+    url: https://www.npmjs.com/package/@frontify/frontify-cli
+    install: npm install -g @frontify/frontify-cli
+    version: 6.2.5
+    description: Frontify CLI for serving, building and deploying Content Blocks / Platform Apps.
+    repo: https://github.com/Frontify/brand-sdk
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/sanity-plugin-frontify"
+    url: https://www.npmjs.com/package/@frontify/sanity-plugin-frontify
+    install: npm install @frontify/sanity-plugin-frontify
+    description: Connect Frontify Digital Asset Management to a Sanity Studio schema.
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/n8n-nodes-frontify"
+    url: https://www.npmjs.com/package/@frontify/n8n-nodes-frontify
+    install: npm install @frontify/n8n-nodes-frontify
+    version: 2.0.0
+    description: n8n community node for Frontify workflow automation.
+    official: true
+notes: >-
+  Frontify's SDK surface is client-side / app-integration oriented (Brand SDK,
+  App Bridge, Finder, Authenticator, Fondue design system) rather than a
+  traditional server-side API client. The public API itself is GraphQL and is
+  called directly or via App Bridge. There is no first-party Python/Go/Ruby/PHP
+  server SDK on the public registries as of this pass.

@@ -1,0 +1,32 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  https://github.com/Frontify/brand-sdk (Frontify CLI) +
+  npm @frontify/frontify-cli v6.2.5 +
+  https://developer.frontify.com/d/xJoA5nhTq1AT/brand-sdk
+name: Frontify CLI
+binary: frontify-cli
+package: "@frontify/frontify-cli"
+install:
+  - npm install -g @frontify/frontify-cli
+  - npx @frontify/frontify-cli
+docs: https://developer.frontify.com/d/xJoA5nhTq1AT/brand-sdk#/details-concepts/frontify-cli
+purpose: >-
+  Developer tooling for building, serving and deploying Frontify Platform Apps
+  and Content Blocks. Part of the Brand SDK (alongside App Bridge and the
+  TypeScript types/helpers packages). Lets developers run and test an app in a
+  local development environment without deploying to the Frontify platform, then
+  build and deploy it.
+command_surface:
+  - group: serve
+    summary: Serve a Content Block / Platform App from the local dev environment for live testing against a Frontify instance.
+  - group: build
+    summary: Build the app bundle for deployment to the Frontify platform.
+  - group: deploy
+    summary: Deploy the built app to the Frontify platform / marketplace.
+notes: >-
+  Command groups are derived from the Brand SDK README and CLI purpose; the
+  authoritative flag/command reference lives in the developer portal Brand SDK
+  docs (SPA-rendered). Also present in the community: `ffy-api-cli`
+  ("Agent-friendly CLI for the Frontify GraphQL API") published by a Frontify
+  employee but not under the @frontify scope — not treated as first-party here.

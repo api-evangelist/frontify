@@ -1,0 +1,45 @@
+generated: '2026-07-19'
+method: searched
+source: https://developer.frontify.com/d/XFPcrX4jz6V8/graphql-api
+description: >-
+  Cross-cutting request/response semantics for the Frontify public API. Frontify
+  exposes a single GraphQL API per instance rather than a REST surface, so many
+  REST conventions (path versioning, per-resource error envelopes) do not apply.
+api_style: graphql
+endpoint: https://{instance}.frontify.com/graphql
+authentication:
+  styles: [oauth2-authorization-code, api-token-bearer]
+  ref: authentication/frontify-authentication.yml
+pagination:
+  style: cursor
+  note: >-
+    GraphQL list fields follow the Relay-style connection pattern
+    (edges/node/pageInfo with cursor + hasNextPage); page size via first/after
+    arguments. Confirmed as GraphQL connection semantics from the API docs.
+idempotency:
+  supported: false
+  note: >-
+    Frontify's API is GraphQL; it does not document an Idempotency-Key header.
+    Mutation idempotency is the caller's responsibility. No Idempotency pointer
+    is wired.
+error_envelope:
+  style: graphql-errors
+  note: >-
+    Errors are returned in the GraphQL top-level `errors[]` array (message +
+    extensions), alongside partial `data`, per the GraphQL spec — not RFC 9457
+    problem+json.
+versioning:
+  scheme: graphql-schema-evolution
+  note: >-
+    Versioning is handled through additive GraphQL schema evolution and
+    deprecation of fields (@deprecated), not URL/path versions. See
+    changelog/frontify-changelog.yml and lifecycle/frontify-lifecycle.yml.
+rate_limiting:
+  note: >-
+    Frontify applies rate limiting to the GraphQL API; specific limits are
+    documented in the developer portal (SPA-rendered) and were not captured
+    verbatim in this pass.
+cross_links:
+  - authentication/frontify-authentication.yml
+  - lifecycle/frontify-lifecycle.yml
+  - changelog/frontify-changelog.yml

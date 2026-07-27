@@ -1,0 +1,63 @@
+generated: '2026-07-19'
+method: searched
+status: published
+source: >-
+  https://github.com/Frontify/mcp-servers (Official Frontify MCP Server
+  Resources) + https://mcp.frontify-integrations.com/
+server:
+  name: Frontify MCP Server
+  hosted_by: Frontify
+  transport: http
+  base_url: https://mcp.frontify-integrations.com/
+  tool_reference: https://mcp.frontify-integrations.com/
+  maturity: beta
+  auth: >-
+    OAuth per the MCP specification (2025-11-25 authorization). Supports both
+    Client ID Metadata Documents (CIMD) and Dynamic Client Registration (DCR);
+    users authorize access to their Frontify instance on first connection.
+description: >-
+  Frontify's hosted MCP server connects AI assistants (Claude, ChatGPT, Cursor)
+  directly to a Frontify digital asset management (DAM) system — discover brands,
+  search and retrieve assets, manage metadata, collaborate, and automate
+  creative workflows through natural language. Nothing to install or run; point
+  an MCP client at a pack endpoint and authorize.
+capabilities:
+  - Brand & structure discovery (brands, libraries, projects)
+  - Navigation & search across brands/libraries/projects with type filtering
+  - Asset retrieval, upload & creation (from URL or file upload)
+  - Organizing assets (tags, targets, custom metadata, collections, folders)
+  - Comments & collaboration (read/add/reply to comments and annotations)
+  - Guidelines (brand portals, guideline pages, library page assets)
+  - Creative templates (list templates, export creatives with variables)
+  - Workflow automation (tasks, statuses, checklists)
+packs:
+  - name: admin
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/admin
+    description: Full access — all tools, no restrictions.
+  - name: discovery
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/discovery
+    description: Read-only exploration — no writes or mutations.
+  - name: collaboration
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/collaboration
+    description: Comments, replies, and workflow tasks.
+  - name: asset-organization
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/asset-organization
+    description: Tags, targets, metadata, collections, and folders.
+  - name: asset-creation
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/asset-creation
+    description: Upload, update, tag, and add metadata to assets.
+  - name: creative-automation
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/creative-automation
+    description: Template export and upload results.
+  - name: workflow-automation
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/workflow-automation
+    description: Full workflow lifecycle and comments.
+  - name: brand-admin
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/brand-admin
+    description: Projects, folders, collections, and asset moves.
+  - name: brand-portal
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/brand-portal
+    description: List guidelines, read pages, browse library page assets.
+  - name: bulk-operations
+    endpoint: https://mcp.frontify-integrations.com/mcp/packs/bulk-operations
+    description: Multi-asset move, update, metadata, and targets.

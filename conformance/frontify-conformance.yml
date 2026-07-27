@@ -1,0 +1,43 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  https://trust.frontify.com/ (compliance program) + developer.frontify.com
+  (GraphQL API + OAuth) + github.com/Frontify/mcp-servers (MCP authorization)
+standards:
+  - id: graphql
+    conforms: true
+    evidence: Frontify's public API is a GraphQL API (developer.frontify.com GraphQL API docs).
+  - id: oauth2
+    conforms: true
+    evidence: >-
+      OAuth 2.0 authorization-code flow against a Frontify instance (Frontify
+      Authenticator, Finder, and the hosted MCP server's OAuth authorization).
+  - id: mcp
+    conforms: true
+    evidence: >-
+      Official hosted Frontify MCP Server implements the Model Context Protocol
+      (2025-11-25) authorization spec with CIMD and Dynamic Client Registration.
+  - id: oidc
+    conforms: false
+    evidence: No /.well-known/openid-configuration served on the web/developer hosts.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: GraphQL API returns errors via the GraphQL top-level errors[] array, not application/problem+json.
+  - id: soc2
+    conforms: true
+    evidence: SOC 2 listed on trust.frontify.com.
+  - id: iso-27001
+    conforms: true
+    evidence: ISO 27001 listed on trust.frontify.com.
+  - id: iso-27017
+    conforms: true
+    evidence: ISO 27017 listed on trust.frontify.com.
+  - id: iso-27018
+    conforms: true
+    evidence: ISO 27018 listed on trust.frontify.com.
+  - id: gdpr
+    conforms: true
+    evidence: GDPR listed on trust.frontify.com.
+compliance_program:
+  url: https://trust.frontify.com/
+  certifications: [SOC 2, ISO 27001, ISO 27017, ISO 27018, GDPR]

@@ -1,0 +1,70 @@
+generated: '2026-07-19'
+method: searched
+source: https://github.com/Frontify/skills
+description: >-
+  Frontify publishes an official, curated Agent Skills catalog in the
+  Frontify/skills GitHub repository. Each skill is a self-contained SKILL.md
+  (with optional references/, scripts/, assets/) conforming to the open Agent
+  Skills spec (agentskills.io) and installable into any compatible agent
+  (Claude Code, Cursor, Codex, OpenCode, Gemini CLI) with a single
+  `npx skills add Frontify/skills --skill <name>` invocation. Skills resolve
+  project-specific values via an AGENTS.md contract in the consuming repo.
+  These are engineering-workflow skills (spec / fix / audit / migration writers
+  plus reviewer personas), not GraphQL-API-operation skills; captured verbatim
+  as the provider's published agent-skill surface.
+install: npx skills add Frontify/skills --skill <skill-name>
+skills:
+  - name: adversarial-review
+    file: skills/adversarial-review/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/adversarial-review/SKILL.md
+  - name: distillation-discipline
+    file: skills/distillation-discipline/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/distillation-discipline/SKILL.md
+  - name: empirical-proof
+    file: skills/empirical-proof/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/empirical-proof/SKILL.md
+  - name: fix-flaky-test
+    file: skills/fix-flaky-test/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/fix-flaky-test/SKILL.md
+  - name: persona-architect
+    file: skills/persona-architect/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/persona-architect/SKILL.md
+  - name: persona-auditor
+    file: skills/persona-auditor/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/persona-auditor/SKILL.md
+  - name: persona-janitor
+    file: skills/persona-janitor/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/persona-janitor/SKILL.md
+  - name: persona-migrator
+    file: skills/persona-migrator/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/persona-migrator/SKILL.md
+  - name: persona-performance-surgeon
+    file: skills/persona-performance-surgeon/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/persona-performance-surgeon/SKILL.md
+  - name: persona-skeptic
+    file: skills/persona-skeptic/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/persona-skeptic/SKILL.md
+  - name: persona-surveyor
+    file: skills/persona-surveyor/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/persona-surveyor/SKILL.md
+  - name: write-audit
+    file: skills/write-audit/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/write-audit/SKILL.md
+  - name: write-bug-report
+    file: skills/write-bug-report/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/write-bug-report/SKILL.md
+  - name: write-documentation
+    file: skills/write-documentation/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/write-documentation/SKILL.md
+  - name: write-feature
+    file: skills/write-feature/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/write-feature/SKILL.md
+  - name: write-fix
+    file: skills/write-fix/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/write-fix/SKILL.md
+  - name: write-migration
+    file: skills/write-migration/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/write-migration/SKILL.md
+  - name: write-performance
+    file: skills/write-performance/SKILL.md
+    source: https://github.com/Frontify/skills/blob/main/skills/write-performance/SKILL.md

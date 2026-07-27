@@ -1,0 +1,19 @@
+generated: '2026-07-19'
+method: searched
+source: >-
+  https://status.frontify.com/ + https://developer.frontify.com/changelog +
+  developer.frontify.com GraphQL API docs
+versioning:
+  scheme: graphql-schema-evolution
+  note: >-
+    Additive GraphQL schema evolution with field-level deprecation
+    (@deprecated); no URL/path API version.
+deprecation:
+  policy_url: null
+  mechanism: graphql-field-deprecation
+  note: >-
+    Deprecation is signaled via GraphQL @deprecated field directives surfaced in
+    the schema and changelog. No separate written deprecation/sunset policy page
+    was verified in this pass, so no Deprecation pointer is wired.
+status_page: https://status.frontify.com/
+changelog: https://developer.frontify.com/changelog
