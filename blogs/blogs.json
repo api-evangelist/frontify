@@ -3,12 +3,12 @@
   "feeds": [
     {
       "source": "https://help.frontify.com/",
-      "feed_url": "https://help.frontify.com/",
+      "feed_url": "https://help.frontify.com/feed.xml",
       "title": "",
-      "saved": 0,
-      "method": "none"
+      "saved": 11,
+      "method": "discovered"
     }
   ],
-  "post_count": 0,
-  "fetched": "2026-07-25T15:00:33Z"
+  "post_count": 11,
+  "fetched": "2026-08-01T15:49:00Z"
 }
