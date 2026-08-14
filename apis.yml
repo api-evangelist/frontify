@@ -8,10 +8,13 @@ description: >-
   searching and retrieving assets, managing metadata, collaborating, browsing
   guidelines, exporting creative templates, and automating creative workflows, plus
   a Brand SDK (App Bridge, Frontify Finder, Frontify CLI) for building Content Blocks
-  and Platform Apps, an official hosted MCP server for AI assistants, and a curated
-  Agent Skills catalog. Frontify was added to the API Evangelist network as a
-  portfolio company of EQT Ventures and enriched here from its public developer,
-  package, and trust surfaces.
+  and Platform Apps, project-scoped webhooks across a 24-event vocabulary, an official
+  hosted MCP server (54 tools in 10 role-scoped packs) for AI assistants, and a curated
+  Agent Skills catalog. GraphQL introspection is open and unauthenticated, so the full
+  schema is captured in this repository as the machine-readable contract; Frontify
+  publishes no OpenAPI. Frontify was added to the API Evangelist network as a portfolio
+  company of EQT Ventures and enriched here from its public developer, package, event,
+  and trust surfaces.
 url: https://raw.githubusercontent.com/api-evangelist/frontify/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -33,7 +36,7 @@ accessModel:
   method: derived
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-19'
+modified: '2026-08-13'
 image: https://www.frontify.com/favicon.ico
 tags:
 - Company
@@ -62,11 +65,25 @@ apis:
   - type: Documentation
     url: https://developer.frontify.com/
   - type: APIReference
-    url: https://developer.frontify.com/reference
+    url: https://frontify.github.io/graphql-reference/
+  - type: GraphQL
+    url: graphql/frontify.graphql
   - type: Authentication
     url: authentication/frontify-authentication.yml
+  - type: OAuthScopes
+    url: scopes/frontify-scopes.yml
   - type: Conventions
     url: conventions/frontify-conventions.yml
+  - type: ErrorCatalog
+    url: errors/frontify-error-catalog.yml
+  - type: RateLimits
+    url: rate-limits/frontify-rate-limits.yml
+  - type: DataModel
+    url: data-model/frontify-data-model.yml
+  - type: Webhooks
+    url: asyncapi/frontify-webhooks.yml
+  - type: ToolCrosswalk
+    url: mcp/frontify-tool-crosswalk.yml
 common:
 - type: Website
   url: https://www.frontify.com/
@@ -75,7 +92,9 @@ common:
 - type: Documentation
   url: https://developer.frontify.com/
 - type: APIReference
-  url: https://developer.frontify.com/reference
+  url: https://frontify.github.io/graphql-reference/
+- type: GettingStarted
+  url: https://help.frontify.com/en/articles/5402357-getting-started-with-the-frontify-graphql-api
 - type: Support
   url: https://help.frontify.com/
 - type: Blog
@@ -120,8 +139,34 @@ common:
   url: changelog/frontify-changelog.yml
 - type: DomainSecurity
   url: security/frontify-domain-security.yml
+- type: GraphQL
+  url: graphql/frontify.graphql
+- type: WellKnown
+  url: well-known/frontify-well-known.yml
+- type: OAuthScopes
+  url: scopes/frontify-scopes.yml
+- type: ToolCrosswalk
+  url: mcp/frontify-tool-crosswalk.yml
+- type: Webhooks
+  url: asyncapi/frontify-webhooks.yml
+- type: LLMsTxt
+  url: llms/frontify-llms.txt
+- type: Plans
+  url: plans/frontify-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/frontify-rate-limits.yml
+- type: ErrorCatalog
+  url: errors/frontify-error-catalog.yml
+- type: DataModel
+  url: data-model/frontify-data-model.yml
+- type: VulnerabilityDisclosure
+  url: security/frontify-vulnerability-disclosure.yml
+- type: Security
+  url: https://www.frontify.com/en/security/
+- type: Deprecation
+  url: lifecycle/frontify-lifecycle.yml
 x-enrichment:
-  date: '2026-07-19'
-  status: backfilled
+  date: '2026-08-13'
+  status: enriched
+  artifacts_added: 19
   pass: local-v1
-  note: backfilled from .gitignore signal + verified work evidence
