@@ -1,0 +1,66 @@
+generated: '2026-08-13'
+method: probed
+source: >-
+  live unauthenticated POSTs to https://api.frontify.com/graphql on 2026-08-13
+  (response header inspection + a 25-request burst) plus a search of the Frontify
+  developer docs and knowledge base for a published limits page
+docs: null
+limit_count: 0
+description: >-
+  Frontify publishes NO numeric rate limits — no requests-per-second/minute figure, no
+  quota table, and no limits page on any readable host. What it DOES ship is better than
+  nothing and worse than a documented limit: every GraphQL response carries a
+  `extensions.complexityScore` integer, so a caller can see the cost of the query it just
+  sent but cannot see the budget that cost is drawn against. There is no published
+  ceiling, no remaining-budget field, and no reset time.
+runtime_signal:
+  present: true
+  mechanism: graphql-query-complexity
+  field: extensions.complexityScore
+  transport: response body (not headers)
+  observed_examples:
+    - {query: '{__typename}', complexityScore: 0}
+    - {query: '{__schema{queryType{name}}}', complexityScore: 0}
+    - {query: '{ brands { id name } }', complexityScore: 3}
+    - {query: '{ asset(id: ...) { id } }', complexityScore: 2}
+  budget_published: false
+  remaining_published: false
+  reset_published: false
+  note: >-
+    A cost meter with no budget. An agent can compare queries to each other but cannot
+    plan against a limit or know how close it is to one.
+headers:
+  rate_limit_headers_present: false
+  probed_for: [X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, RateLimit, RateLimit-Policy, Retry-After]
+  observed_response_headers: [date, content-type, server, vary, access-control-allow-origin, x-frontify-version, strict-transport-security, x-xss-protection]
+  note: >-
+    `x-frontify-version` (e.g. app-server-2026-08-13T08-17-13Z-16da142d) is a build
+    identifier, not a rate-limit or API-version signal.
+exhaustion:
+  status_code: unknown
+  body: unknown
+  retry_after: unknown
+  note: Not observed — no throttling was triggered in this pass. See probe below.
+limits: []
+probes:
+  - url: https://api.frontify.com/graphql
+    method: POST
+    description: 25 sequential unauthenticated POSTs of '{__typename}'
+    result: 25 x HTTP 200, no throttling, no rate-limit headers, no Retry-After
+    checked: '2026-08-13'
+  - url: https://api.frontify.com/graphql
+    method: POST
+    description: deeply nested introspection query intended to exceed a complexity budget
+    result: HTTP 200, served in full — no complexity ceiling was hit anonymously
+    checked: '2026-08-13'
+gaps:
+  - >-
+    Publish the complexity budget alongside the complexityScore, and emit
+    RateLimit / RateLimit-Policy headers (RFC 9745-style) so a client can see remaining
+    budget and reset without guessing.
+  - Document the status code and body returned on exhaustion.
+note: >-
+  Frontify's knowledge base and developer portal were searched for a limits page; none
+  exists. The developer portal is a JS-rendered SPA, so an unreadable page cannot be
+  ruled out — but no limits article surfaced in the knowledge base either, and third-party
+  connector documentation for Frontify does not cite one.

@@ -1,7 +1,17 @@
-generated: '2026-07-19'
+generated: '2026-08-13'
 method: searched
 source: https://github.com/Frontify/skills
 description: >-
+  TWO SETS OF SKILLS LIVE IN THIS INDEX, and they are different things.
+  `skills[]` is Frontify's OWN published Agent Skills catalogue, captured verbatim
+  (method: searched) — engineering-workflow skills, not API skills.
+  `api_skills[]` is the set API Evangelist generated (method: generated) to teach an agent
+  how to call the Frontify GraphQL API correctly; every GraphQL field named in them was
+  grepped out of graphql/frontify.graphql. Frontify publishes no API-operation skills of
+  its own, which is why the second set exists.
+
+# --- Frontify's own published catalogue (verbatim, method: searched) ---
+provider_catalogue_description: >-
   Frontify publishes an official, curated Agent Skills catalog in the
   Frontify/skills GitHub repository. Each skill is a self-contained SKILL.md
   (with optional references/, scripts/, assets/) conforming to the open Agent
@@ -68,3 +78,29 @@ skills:
   - name: write-performance
     file: skills/write-performance/SKILL.md
     source: https://github.com/Frontify/skills/blob/main/skills/write-performance/SKILL.md
+
+# --- API Evangelist generated, grounded in graphql/frontify.graphql (method: generated) ---
+api_skills_method: generated
+api_skills_source: graphql/frontify.graphql
+api_skills_note: >-
+  One skill per marquee Frontify flow. Every GraphQL query, mutation, input object and enum
+  value referenced was verified against the live introspected schema before being written;
+  none were invented. Where a fact was not verifiable (webhook signature header name,
+  complexity budget), the skill says so rather than guessing.
+api_skills:
+  - file: frontify-search-and-retrieve-assets.md
+    name: Search and retrieve Frontify assets
+    api: graphql/frontify.graphql
+    operations: [brands, brand, library, workspaceProject, assets, asset, assetsByExternalId]
+  - file: frontify-upload-asset.md
+    name: Upload an asset to Frontify
+    api: graphql/frontify.graphql
+    operations: [uploadFile, createAsset, replaceAsset, addAssetTags, addCustomMetadata, assetsByExternalId]
+  - file: frontify-export-creative-template.md
+    name: Export a creative from a Frontify template
+    api: graphql/frontify.graphql
+    operations: [creativeTemplates, creativeTemplate, exportCreative, creativeExport, cancelExportCreatives]
+  - file: frontify-subscribe-to-events.md
+    name: Subscribe to Frontify events with a webhook
+    api: graphql/frontify.graphql
+    operations: [installProjectWebhook, configureProjectWebhook, webhooks, uninstallWebhook]

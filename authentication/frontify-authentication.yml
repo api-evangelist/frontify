@@ -1,35 +1,106 @@
-generated: '2026-07-19'
-method: searched
+generated: '2026-08-13'
+method: probed
 source: >-
-  https://developer.frontify.com/ (GraphQL API + authentication docs) +
-  npm @frontify/frontify-authenticator + github.com/Frontify/mcp-servers
-docs: https://developer.frontify.com/d/XFPcrX4jz6V8/graphql-api
+  well-known/frontify-oauth-authorization-server.json +
+  well-known/frontify-oauth-protected-resource.json (both fetched live from the Frontify
+  MCP host) + the WWW-Authenticate challenge observed on an anonymous MCP tools/list POST
+  + live GraphQL permission-error probes + Frontify's own MCP pack pages +
+  https://developer.frontify.com/ and npm @frontify/frontify-authenticator
+docs: https://help.frontify.com/en/articles/5402357-getting-started-with-the-frontify-graphql-api
 summary:
   types: [oauth2, apiKey]
   api_key_in: [header]
   oauth2_flows: [authorizationCode]
+  pkce: S256 (MCP authorization server)
+  dynamic_client_registration: true (MCP authorization server, RFC 7591)
   note: >-
-    Derived from documentation and the official Frontify Authenticator package
-    rather than an OpenAPI spec (Frontify's public API is GraphQL; no OpenAPI is
-    published). Scope strings are intentionally not enumerated here — the exact
-    scope reference is behind the SPA developer portal and was not verified in
-    this pass, so no scopes/ artifact is asserted.
+    Frontify publishes no OpenAPI, so this profile is not derived from securitySchemes.
+    It is assembled from two RFC-compliant discovery documents Frontify actually serves,
+    the live 401 challenge on its MCP endpoint, and observed GraphQL permission errors.
+surfaces:
+  - name: Frontify GraphQL API
+    endpoint: https://{instance}.frontify.com/graphql
+    schemes: [OAuth2 (Authorization Code), API Token (Bearer)]
+    anonymous_behavior: >-
+      Schema introspection succeeds anonymously (HTTP 200, full schema). Any data field
+      returns HTTP 200 with errors[0].message "UserId not set in identity." or
+      "policy 'authenticated' not fulfilled" and extensions.category "permission".
+      Introspection is open; data is not.
+  - name: Frontify MCP Server
+    endpoint: https://mcp.frontify-integrations.com/mcp
+    schemes: [OAuth2 (Authorization Code + PKCE)]
+    anonymous_behavior: >-
+      HTTP 401 with a spec-conformant challenge:
+      WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource/mcp",
+      scope="mcp:tools"
 schemes:
-  - name: OAuth2 (Authorization Code)
+  - name: OAuth2 (Authorization Code) — Frontify instance
     type: oauth2
     flow: authorizationCode
+    authorizationUrl: https://{instance}.frontify.com/api/oauth/authorize
     description: >-
-      Interactive OAuth 2.0 authorization against a user's Frontify instance —
-      used by the Frontify Authenticator, Finder, and the hosted MCP server
-      (which follows the MCP authorization spec with CIMD and Dynamic Client
-      Registration). Authorization/token endpoints are instance-scoped
-      (https://{instance}.frontify.com).
-    sources: [developer.frontify.com, "@frontify/frontify-authenticator", github.com/Frontify/mcp-servers]
-  - name: API Token (Bearer)
+      Interactive OAuth 2.0 authorization against a user's Frontify instance — used by
+      the Frontify Authenticator, Finder, Brand SDK apps and custom integrations. Client
+      ID / Client Secret are issued by creating an OAuth application in the instance's
+      Developer settings; the scope set requested at registration must match the scope
+      set requested at authorization.
+    scopes: scopes/frontify-scopes.yml
+    sources: [developer.frontify.com, "@frontify/frontify-authenticator", third-party connector docs]
+  - name: API Token (Bearer) — Frontify instance
     type: apiKey
     in: header
     parameter: Authorization
+    format: Bearer <token>
     description: >-
-      Personal / API access tokens generated per Frontify instance are sent as a
-      Bearer token when calling the GraphQL API directly (server-to-server).
-    sources: [developer.frontify.com]
+      Personal / API access tokens generated per Frontify instance, sent as a Bearer
+      token for server-to-server GraphQL calls. Frontify's knowledge base notes API
+      access must be enabled on the account.
+    sources: [developer.frontify.com, help.frontify.com]
+  - name: OAuth2 (Authorization Code + PKCE) — MCP authorization server
+    type: oauth2
+    flow: authorizationCode
+    issuer: https://mcp.frontify-integrations.com
+    authorizationUrl: https://mcp.frontify-integrations.com/oauth/authorize
+    tokenUrl: https://mcp.frontify-integrations.com/oauth/token
+    registrationUrl: https://mcp.frontify-integrations.com/oauth/register
+    scopes_supported: [mcp:tools, openid]
+    response_types_supported: [code]
+    grant_types_supported: [authorization_code, refresh_token]
+    code_challenge_methods_supported: [S256]
+    token_endpoint_auth_methods_supported: [none]
+    client_id_metadata_document_supported: true
+    bearer_methods_supported: [header]
+    protected_resource: https://mcp.frontify-integrations.com/mcp
+    description: >-
+      The MCP server runs its own authorization server implementing the MCP 2025-11-25
+      authorization spec — RFC 8414 AS metadata, RFC 9728 protected-resource metadata,
+      PKCE S256, public clients (token_endpoint_auth_method none), and BOTH client
+      registration approaches: Client ID Metadata Documents and Dynamic Client
+      Registration. A user authorizes access to their Frontify instance on first
+      connection; the server then brokers to the instance under the pack's Frontify
+      scopes.
+    sources:
+      - well-known/frontify-oauth-authorization-server.json
+      - well-known/frontify-oauth-protected-resource.json
+      - well-known/frontify-openid-configuration.json
+sso:
+  note: >-
+    Frontify supports SAML SSO for platform users (Microsoft Entra / Azure AD documented
+    examples, SSO user-group mapping). That is end-user authentication to the product,
+    not API authentication, and is out of scope for this profile.
+  source: help.frontify.com SSO articles
+probes:
+  - url: https://mcp.frontify-integrations.com/.well-known/oauth-authorization-server
+    http_status: 200
+    checked: '2026-08-13'
+  - url: https://mcp.frontify-integrations.com/.well-known/oauth-protected-resource
+    http_status: 200
+    checked: '2026-08-13'
+  - url: https://mcp.frontify-integrations.com/mcp
+    http_status: 401
+    result: OAuth challenge, scope="mcp:tools"
+    checked: '2026-08-13'
+  - url: https://api.frontify.com/graphql
+    http_status: 200
+    result: 'anonymous data query -> extensions.category "permission"'
+    checked: '2026-08-13'

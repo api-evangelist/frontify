@@ -1,0 +1,3223 @@
+schema {
+  query: RootQuery
+  mutation: RootMutation
+}
+
+"""Indicates that an Input Object is a OneOf Input Object (and thus requires exactly one of its fields be provided)."""
+directive @oneOf on INPUT_OBJECT
+
+"""Defines how the `AssetComment` list should be filtered."""
+enum AssetCommentStatusFilter {
+  OPEN
+  RESOLVED
+  ALL
+}
+
+"""Search sorting option. Defines how the search results should be sorted."""
+enum AssetQueryFilterSortType {
+  """Sorts the results by the relevance (query score)."""
+  RELEVANCE
+  """Sorts the results by the newest `Assets`."""
+  NEWEST
+  """Sorts the results by the oldest `Assets`."""
+  OLDEST
+  """Sorts the results ascending by the title of the `Assets`."""
+  TITLE_ASCENDING
+  """sorts the results descending by the title of the `Assets`."""
+  TITLE_DESCENDING
+}
+
+"""List of possible `Asset` status types."""
+enum AssetStatusType {
+  FINISHED
+  PROCESSING
+  PROCESSING_FAILED
+}
+
+"""The type of an `asset`."""
+enum AssetType {
+  AUDIO
+  DOCUMENT
+  FILE
+  IMAGE
+  VIDEO
+}
+
+"""The events a webhook can subscribe to."""
+enum AssetWebhookEvent {
+  ASSET_ATTACHMENT_ADDED
+  ASSET_ATTACHMENT_REMOVED
+  ASSET_COLLECTION_ADDED
+  ASSET_COLLECTION_REMOVED
+  ASSET_CREATED
+  ASSET_CUSTOM_METADATA_UPDATED
+  ASSET_DELETED
+  ASSET_LICENCE_ADDED
+  ASSET_LICENCE_REMOVED
+  ASSET_MOVED
+  ASSET_PROCESSED
+  ASSET_RELATION_ADDED
+  ASSET_RELATION_REMOVED
+  ASSET_REVISION_ADDED
+  ASSET_TAG_ADDED
+  ASSET_TAG_REMOVED
+  ASSET_TARGET_CHANGED
+  ASSET_UPDATED
+  ASSET_VARIANT_ADDED
+  ASSET_VARIANT_REMOVED
+  ASSET_VARIANT_UPDATED
+  WORKFLOW_TASK_ASSIGNED
+  WORKFLOW_TASK_DELETED
+  WORKFLOW_TASK_MOVED
+}
+
+"""
+Condition operators. Defines how the value of the `Asset` is compared to the provided value.
+Supported Operators:
+- **IS**: equals to the provided value.
+- **IS_NOT**: is not equal to provided value.
+"""
+enum ConditionOperator {
+  IS
+  IS_NOT
+}
+
+"""
+Condition types. A Condition defines which field value of the `Asset` is compared against a given value.
+We currently support 4 different kinds of Conditions on `Assets`:
+- **TAG**: Refers to a tag of the `Asset`.
+- **METADATA_VALUE**: Refers to a value of a custom `MetadataField` of an `Asset`.
+- **CUSTOM_METADATA_VALUE**: Refers to a value of a `CustomMetadata` of an `Asset`.
+- **EXTERNAL_ID**: Refers to the `externalId` assigned to the `Asset`.
+- **FILE_EXTENSION**: Refers to the file extension of an `Asset`.
+"""
+enum ConditionType {
+  METADATA_VALUE
+  CUSTOM_METADATA_VALUE
+  EXTERNAL_ID
+  TAG
+  FILE_EXTENSION
+}
+
+"""List of possible asset `copyright` status."""
+enum CopyrightStatus {
+  UNKNOWN
+  COPYRIGHTED
+  PUBLIC
+}
+
+"""List of possible `CreativeExportOptionsInput` formats."""
+enum CreativeExportFormat {
+  PNG
+  JPG
+  PDF
+  MP4
+  GIF
+  HTML
+}
+
+"""Compression level, affecting quality and filesize of the exported Creative."""
+enum CreativeExportQuality {
+  MAXIMUM
+  HIGH
+  MEDIUM
+  LOW
+}
+
+"""List of possible `Creative Job` statuses."""
+enum CreativeJobStatus {
+  """The job is currently being prepared and is awaiting rendering."""
+  PROCESSING
+  """The job is currently rendering."""
+  RENDERING
+  """The job has been canceled successfully."""
+  CANCELED
+  """The job has been completed successfully."""
+  FINISHED
+  """The processing of the job failed."""
+  FAILED
+}
+
+"""Query sorting option. Defines how the search results should be sorted."""
+enum CreativeTemplateQuerySort {
+  """Sorts the results by the newest entry."""
+  NEWEST
+  """Sorts the results by the oldest entry`."""
+  OLDEST
+}
+
+"""List of possible `CreativeTemplateVariable` types."""
+enum CreativeTemplateVariableType {
+  """Boolean Variable Type, possible values are `true` or `false`"""
+  BOOL
+  """Number Variable Type, values must be integers"""
+  NUMBER
+  """Text content Variable Type"""
+  TEXT
+  """Image Variable Type, values are `AssetID`s for referencing"""
+  IMAGE
+  """Color Variable Type, you can either pass an rgba object or a HEX value as string"""
+  COLOR
+  """Float Variable Type"""
+  FLOAT
+  """Position Variable Type, you need to pass an object with `left: number` and `top: number` properties"""
+  POSITION
+}
+
+"""List of possible `CustomMetadataProperty` position placement options."""
+enum CustomMetadataPropertyPositionPlacement {
+  FIRST
+  LAST
+  BEFORE
+  AFTER
+}
+
+"""List of possible `CustomMetadataProperty` type names."""
+enum CustomMetadataPropertyTypeName {
+  SELECT
+  MULTISELECT
+  TEXT
+  LONGTEXT
+  DATE
+  NUMBER
+  URL
+  CATALOG
+}
+
+"""List of possible `Library` types."""
+enum LibraryType {
+  ICON_LIBRARY
+  MEDIA_LIBRARY
+  LOGO_LIBRARY
+  DOCUMENT_LIBRARY
+}
+
+"""Whether the marketplace app is available publicly or privately."""
+enum MarketplaceAppAvailability {
+  """Private Availability"""
+  PRIVATE
+  """Community Availability"""
+  COMMUNITY
+}
+
+"""List of possible custom `MetadataField` types."""
+enum MetadataFieldType {
+  SELECT
+  TEXT
+  LONGTEXT
+  DATE
+  NUMBER
+}
+
+"""List of possible `Project` permission levels."""
+enum ProjectPermission {
+  EDIT
+  COMMENT
+  VIEW
+  ADMIN
+  TRANSLATE
+}
+
+"""Different `Project` types"""
+enum ProjectType {
+  DOCUMENT_LIBRARY
+  ICON_LIBRARY
+  LOGO_LIBRARY
+  MEDIA_LIBRARY
+  WORKSPACE
+}
+
+"""The source of a `tag`."""
+enum TagSource {
+  MANUAL
+  AUTO
+}
+
+input AddAssetLicenseInput {
+  """`Asset` Id."""
+  assetId: ID!
+  """`License` Id."""
+  licenseId: ID!
+}
+
+input AddAssetMetadataFieldValueInput {
+  """`Asset` Id."""
+  assetId: ID!
+  """Metadata field Id."""
+  metadataFieldId: ID!
+  """Value to be assigned to `Asset` and `Metadata Field`."""
+  value: String!
+}
+
+input AddAssetPreviewImageInput {
+  """`Asset` Id."""
+  assetId: ID!
+  """`File` Id. Signed Id returned by `uploadFile` mutation."""
+  fileId: ID!
+}
+
+input AddAssetRelationsInput {
+  """`Asset` Id."""
+  assetId: ID!
+  """Related `Asset` Id list."""
+  relatedAssetIds: [ID!]!
+}
+
+input AddAssetTagsInput {
+  """`Asset` Id."""
+  id: ID!
+  """List of `Tag` values linked to `Asset`."""
+  tags: [TagInput]
+}
+
+input AddCollectionAssetsInput {
+  """`Collection` Id."""
+  collectionId: ID!
+  """Ids of the `Assets` to add to the `Collection`. Must be in the same `Library` as the `Collection`."""
+  assetIds: [ID!]!
+}
+
+input AddCustomMetadataInput {
+  """Set of parent Ids to which `CustomMetadata` should be added."""
+  parentIds: [ID!]!
+  """`CustomMetadata` property and respective values to add to the given set of parents."""
+  customMetadata: [CustomMetadataInput!]!
+}
+
+input AddCustomMetadataPropertyOptionInput {
+  """`CustomMetadataPropertyOption` value."""
+  value: String!
+  """Define `CustomMetadataPropertyOption` as default. Applies to newly created `Assets` only."""
+  isDefault: Boolean = false
+}
+
+input AddCustomMetadataPropertyOptionsInput {
+  """`CustomMetadataProperty` Id."""
+  propertyId: ID!
+  """List of `CustomMetadataPropertyOption` items to add to existing `CustomMetadataProperty`."""
+  options: [AddCustomMetadataPropertyOptionInput!]!
+}
+
+input AssetCommentQueryInput {
+  """Filter `AssetComment` by status."""
+  status: AssetCommentStatusFilter! = ALL
+}
+
+input AssetQueryFilterConditionInput {
+  """Defines which property of the `Asset` is compared to the provided value."""
+  type: ConditionType!
+  """Defines how the value of the `Asset` is compared to the provided value."""
+  operator: ConditionOperator = IS
+  """The value which is compared against the property of the `Asset`."""
+  value: String!
+  """**REQUIRED** for type `METADATA_VALUE` to identify which metadata field it is compared against. You can find all available `metadataFields` on the project."""
+  metadataFieldId: ID
+  """**REQUIRED** for type `CUSTOM_METADATA_VALUE` to identify which `CustomMetadataProperty` it is compared against. You can find all available `CustomMetadataProperty` on the project."""
+  customMetadataPropertyId: ID
+}
+
+input AssetQueryFilterInput {
+  """The Asset must pass **all conditions** in this List to be present in the result set."""
+  andConditions: [AssetQueryFilterConditionInput]
+  """The Asset must pass **at least one condition** in this List to be present in the result set."""
+  orConditions: [AssetQueryFilterConditionInput]
+}
+
+input AssetQueryInFolderInput {
+  """`Folder` Id."""
+  id: ID!
+}
+
+input AssetQueryInput {
+  """Use filters to reduce the set of matched `Asset` items by complex filtering."""
+  filter: AssetQueryFilterInput
+  """Limit the result set to a specific `Folder` of this `Library`."""
+  inFolder: AssetQueryInFolderInput
+  """Sort set of the matched `AssetItems`."""
+  sortBy: AssetQueryFilterSortType
+  """Limit the result set by the externalId of an `Asset`."""
+  externalId: ID
+  """Limit the result set by the search term."""
+  search: String
+  """Limit the result set by the `Asset` types."""
+  types: [AssetType]
+}
+
+input CancelExportCreativesInput {
+  """List of `CreativeJob` Ids that should be canceled."""
+  ids: [ID]!
+}
+
+input ConfigureProjectWebhookInput {
+  """Project ID."""
+  projectId: ID!
+  """Webhook notification URL."""
+  notificationUrl: String!
+  """Webhook name."""
+  name: String!
+  """Webhook payload version (1 or 2)."""
+  version: Int!
+  """Subscribe to specific webhook events. If not defined the webhook will subscribe to all events"""
+  subscribeTo: [AssetWebhookEvent!] = null
+}
+
+input CreateAssetCommentInput {
+  """Id of the `Asset` where you wish to create a new `AssetComment`."""
+  assetId: ID!
+  """`AssetComment` content. Can include `User` mentions by wrapping an authorized `Project` `User` Id in the form of `@[user:<id>]` where `<id>` is the `User` integer or global identifier."""
+  content: String!
+  """Add a `Marking` (highlighted area) to the new `AssetComment`."""
+  marking: MarkingInput
+}
+
+input CreateAssetInput {
+  """File Id. Signed Id returned in `uploadFile`."""
+  fileId: ID!
+  """`Asset` title or display name."""
+  title: String!
+  """Alternative text for the `Asset`. Used by screen readers when the asset is not decorative."""
+  alternativeText: String
+  """`Asset` description."""
+  description: String = ""
+  """`Asset` external Id."""
+  externalId: ID
+  """Add `Asset` copyright details."""
+  copyright: CreateCopyrightInput
+  """List of tags to create with `Asset`"""
+  tags: [TagInput]
+  """Skip file's EXIF metadata. When true, it will ignore all file metadata contents."""
+  skipFileMetadata: Boolean = false
+  """An array of strings representing the directory, if a folder does not exist, it is created. Example: ["My Folder", "Sub-Folder"] will create the necessary folders if they do not yet exist and place the `Asset` in it. **Important:** Cannot be used in conjunction with `parentId` that is from a `Folder`."""
+  directory: [String]
+  """The parent Id, where the `Asset` should be located in. Should either be a `Library`, `WorkspaceProject` or `Folder` Id. **Important:** Cannot be used in conjunction with `directory` if the Id is from a `Folder`."""
+  parentId: ID
+  """`Asset` will become available only during the interval.When undefined or `null` the `Asset` will be immediately and indefinitely available."""
+  availability: DateTimeRangeInput
+  """`Asset` will expire once the defined date is reached."""
+  expiresAt: DateTime
+  """Represents the Author of the `Asset`. Example: Photographer Name"""
+  author: String = ""
+}
+
+input CreateAssetVariantInput {
+  """File Id. Signed Id returned in `uploadFile`."""
+  fileId: ID!
+  """`Asset` Id. Currently, only `Assets` from Logo and Icon `Library` type are supported."""
+  assetId: ID!
+  """`AssetVariant` key composed of the color space and the file extension. Examples: RGB:JPG, CMYK:SVG"""
+  key: String!
+}
+
+input CreateAttachmentInput {
+  """Parent Id."""
+  parentId: ID!
+  """File Id. Signed Id returned in `uploadFile`."""
+  fileId: ID!
+  """Attachment name or display name."""
+  name: String!
+  """Attachment external Id."""
+  externalId: ID
+}
+
+input CreateCollectionInput {
+  """Id of the parent where you wish to create a new `Collection`. Currently supported for `Library` type parent entities only."""
+  parentId: ID!
+  """Name of the `Collection`."""
+  name: String!
+}
+
+input CreateCopyrightInput {
+  """`Asset` copyright status."""
+  status: CopyrightStatus! = UNKNOWN
+  """`Asset` copyright notice. Supports medium text length."""
+  notice: String = ""
+}
+
+input CreateCustomMetadataPropertyInput {
+  """`CustomMetadataProperty` parent Id."""
+  parentId: ID!
+  """`CustomMetadataProperty` display name."""
+  name: String!
+  """`CustomMetadataProperty` type."""
+  type: CreateCustomMetadataPropertyTypeInput!
+  """`CustomMetadataProperty` help text."""
+  helpText: String = ""
+  """Define if `CustomMetadataProperty` is required."""
+  isRequired: Boolean = false
+  """Set a `CustomMetadataProperty` default value. This setting will be ignored for properties that are not of `SELECT` or `MULTISELECT` type  (use options for these cases instead). Applies to newly uploaded `Assets` only."""
+  defaultValue: String
+  """Position in the list of newly created `CustomMetadataProperty`."""
+  position: CustomMetadataPropertyPositionInput
+}
+
+input CreateCustomMetadataPropertyTypeInput {
+  """`CustomMetadataProperty` type name."""
+  name: CustomMetadataPropertyTypeName!
+  """Define CustomMetadataProperty` options for `SELECT` or `MULTISELECT` type properties."""
+  options: [CreateCustomMetadataPropertyTypeOptionInput!]
+}
+
+input CreateCustomMetadataPropertyTypeOptionInput {
+  """`CustomMetadataPropertyOption` value."""
+  value: String!
+  """Define `CustomMetadataPropertyOption` as default. Applies to newly created `Assets` only."""
+  isDefault: Boolean = false
+}
+
+input CreateExternalAssetInput {
+  """Destination `Project` Id."""
+  projectId: ID!
+  """External `Asset` `Url`."""
+  url: Url!
+  """External `Asset` title or display name."""
+  title: String!
+  """External `Asset` description."""
+  description: String = ""
+  """External `Asset` fixed width."""
+  width: Int
+  """External `Asset` fixed height."""
+  height: Int
+  """External `Asset` allow interactions."""
+  allowInteractions: Boolean = true
+  """External `Asset` external Id."""
+  externalId: ID
+  """External `Asset` copyright details."""
+  copyright: CreateCopyrightInput
+  """External `Asset` destination folder. Folders will be created if they don't exist."""
+  directory: [String] = []
+  """Expiry Date. External `Asset` will expire once the defined date is reached."""
+  expiresAt: DateTime
+  """Represents the Author of the External `Asset`."""
+  author: String = ""
+}
+
+input CreateFolderInput {
+  """The parent Id of the `Folder` creation destination. Possible identifiers are `Library`/`Workspace` or `Folder`."""
+  parentId: ID!
+  """`Folder` name."""
+  name: String!
+  """`Folder` description."""
+  description: String
+}
+
+input CreateLicenseInput {
+  """`Library` Id."""
+  projectId: ID!
+  """`License` title."""
+  title: String!
+  """`License` terms."""
+  license: String!
+  """Apply `License` to new assets by default."""
+  addByDefault: Boolean = false
+  """Require user to accept `License` terms before download."""
+  requireConsensus: Boolean = false
+}
+
+input CreateMetadataFieldInput {
+  """`Project`/`Library` Id where metadata field should be created."""
+  projectId: ID!
+  """Create custom metadata field label."""
+  label: String!
+  """Create custom metadata field type."""
+  type: MetadataFieldType! = TEXT
+  """Create custom metadata field allowed values. Only valid for `SELECT` type fields."""
+  values: [MetadataFieldValuesInput]
+  """New custom metadata default value option. This value will be set to all new assets."""
+  defaultValue: String
+  """Allow multiple values in `SELECT` type `Metadata Field`."""
+  allowMultipleValues: Boolean = false
+  """Allow an empty value as a valid `SELECT` type `Metadata Field` value."""
+  allowEmptyValue: Boolean = false
+  """Allow users to search for `Metadata Field` values in the Frontify UI."""
+  isSearchable: Boolean = true
+  """Allow users to edit `Metadata Field` values in the Frontify UI."""
+  isEditable: Boolean = true
+  """Show/hide `Metadata Field` values in the Frontify UI."""
+  isVisible: Boolean = true
+}
+
+input CreateWorkspaceProjectInput {
+  """Id of the `Brand` where `Project` should be inserted."""
+  brandId: ID!
+  """`Workspace` type `Project` name."""
+  name: String!
+}
+
+input CreativeTemplateQueryInput {
+  """Sort order of the `CreativeTemplate` query result set."""
+  sortBy: CreativeTemplateQuerySort
+}
+
+input CreativeVariableInput {
+  """Template variable `Key`."""
+  key: String!
+  """`Value` of template variable."""
+  value: Any
+}
+
+input CustomMetadataInput {
+  """`CustomMetadataProperty` Id."""
+  propertyId: ID!
+  """`CustomMetadataProperty` value. Polymorphic per property type: scalar (`String`/`Float`/`Int`/`DateTime`) for single-value types; list of `Int` option IDs for `MULTISELECT`; for `CATALOG`, a non-empty list of entry objects of the shape `[{"rowId": 123, "children": [{"rowId": 456, "sourceColumnId": 789}]}, …]` — the server persists the selection transparently."""
+  value: Any
+}
+
+input CustomMetadataPropertyPositionInput {
+  """`CustomMetadataProperty` Id used as positional reference for `BEFORE` and `AFTER` placements."""
+  targetId: ID
+  """`CustomMetadataProperty` position placement."""
+  placement: CustomMetadataPropertyPositionPlacement!
+}
+
+input DateTimeRangeInput {
+  """Start `DateTime` of the range."""
+  from: DateTime
+  """End `DateTime` of the range."""
+  to: DateTime
+}
+
+input DeleteAssetInput {
+  """Id of the `Asset` to delete."""
+  id: ID!
+}
+
+input DeleteAssetVariantInput {
+  """`Asset` Id of the `AssetVariant` to delete."""
+  assetId: ID!
+  """Key of the `AssetVariant` to delete. Composed of the color space and the file extension. Examples: RGB:JPG, CMYK:SVG."""
+  key: String!
+}
+
+input DeleteAttachmentInput {
+  """Id of the `Attachment` to delete."""
+  id: ID!
+}
+
+input DeleteCollectionInput {
+  """`Collection` Id."""
+  collectionId: ID!
+}
+
+input DeleteCommentInput {
+  """Id of the `AssetComment` to delete."""
+  id: ID!
+}
+
+input DeleteCustomMetadataPropertyInput {
+  """`CustomMetadataProperty` Id."""
+  id: ID!
+}
+
+input DeleteFoldersInput {
+  """Ids of the `Folders` to delete."""
+  ids: [ID!]!
+}
+
+input DeleteLicenseInput {
+  """Id of the `License` to delete."""
+  id: ID!
+}
+
+input DeleteMetadataFieldInput {
+  """Id of the `MetadataField` to delete."""
+  id: ID!
+}
+
+input EditCommentInput {
+  """`AssetComment` Id you wish to edit."""
+  id: ID!
+  """`AssetComment` content to edit. Can include `User` mentions by wrapping an authorized `Project` `User` Id in the form of `@[user:<id>]` where `<id>` is the user identifier."""
+  content: String!
+}
+
+input ExportCreativeDestinationInput {
+  """`Project` Id destination for the exported Creative."""
+  destinationId: ID!
+  """`Title` of file."""
+  title: String!
+}
+
+input ExportCreativeInput {
+  """`CreativeTemplateId` Id."""
+  templateId: ID!
+  """`ExportCreativeDestinationInput` where the exported file will be uploaded."""
+  destination: ExportCreativeDestinationInput
+  """List of `CreativeVariableInput` which will be applied to the template."""
+  variables: [CreativeVariableInput]
+  """`ExportCreativeOptionsInput` data."""
+  options: ExportCreativeOptionsInput
+}
+
+input ExportCreativeOptionsInput {
+  """`Format` of exported file."""
+  format: CreativeExportFormat
+  """`Quality` of exported file. Supported only for `JPG` `Format`."""
+  quality: CreativeExportQuality
+  """`TransparentBackground` export parameter. Supported only by `PNG` `Format`."""
+  hasTransparentBackground: Boolean
+  """List of pages to export. If provided, validates that all requested pages exist in a template before export. If not provided, all pages will be exported."""
+  pages: [Int!]
+}
+
+input InstallProjectWebhookInput {
+  """Destination `Project` Id."""
+  projectId: ID!
+  """`Url` to send the `ProjectWebhook` notification to."""
+  notificationUrl: Url!
+  """`ProjectWebhook` name."""
+  name: String!
+}
+
+input InviteProjectUserInput {
+  """Id of the `Project` you want to invite `User` to."""
+  projectId: ID!
+  """Email address of the `User` you would like to invite."""
+  email: Email!
+  """`Project` permission level of the `User` you are inviting."""
+  permission: ProjectPermission! = VIEW
+  """Start `Date` for `User` access permission validity."""
+  validFrom: DateTime
+  """End `Date` for `User` access permission validity."""
+  validTo: DateTime
+}
+
+input LibraryCollectionQueryInput {
+  """Limit the result set by the search term."""
+  term: String
+}
+
+input LibraryPageAssetQueryInput {
+  """Search term used to retrieve matched results."""
+  term: String
+}
+
+input MarkingDimensionsInput {
+  """The width of the `Marking` area in percentage of the annotated subject total width."""
+  width: Percent!
+  """The height of the `Marking` area in percentage of the annotated subject total height."""
+  height: Percent!
+}
+
+input MarkingInput {
+  """The `Marking` position in percentage, in relation to the top left corner of the `Asset`."""
+  position: MarkingPositionInput
+  """The `Marking` dimensions in percentage of the annotated subject dimensions."""
+  dimensions: MarkingDimensionsInput
+  """The timeframe of the `Marking` area in percentage of total video length. Applicable to `Video` type `Assets` only."""
+  timeframe: MarkingTimeframeInput
+  """The `Marking` page. Applicable to `Assets` with the type `Document` only."""
+  page: Int
+}
+
+input MarkingPositionInput {
+  """The horizontal position of the `Marking` in percentage, in relation to the `Asset` top left corner."""
+  x: Percent!
+  """The vertical position of the `Marking` in percentage, in relation to the `Asset` top left corner."""
+  y: Percent!
+}
+
+input MarkingTimeframeInput {
+  """The start of the `Marking` area in percentage of total video length. Defaults to video start (0) when the timeframe input property is set."""
+  start: Percent
+  """The end of the `Marking` area in percentage of total video length. Defaults to video end (1) when the timeframe input property is set."""
+  end: Percent
+}
+
+input MetadataFieldValuesInput {
+  """Possible value of `SELECT` type `Metadata Field`."""
+  value: String!
+  """Optional setting to define current `SELECT` type `Metadata Field` value as default."""
+  default: Boolean = false
+}
+
+input MoveAssetsInput {
+  """Ids of the `Asset` items to be moved."""
+  assetIds: [ID!]!
+  """Id of the destination entity where `Asset` items should be moved to. Allows `Library`/`Workspace`/`Folder` Ids only."""
+  destinationId: ID!
+}
+
+input MoveFoldersInput {
+  """Ids of the `Folder` items to be moved."""
+  folderIds: [ID!]!
+  """Id of the destination entity where `Folder` items should be moved to. Allows `Library`/`Workspace`/`Folder` Ids only."""
+  destinationId: ID!
+}
+
+input PublishMarketplaceAppInput {
+  """The marketplace app ID to publish."""
+  appId: String!
+  """Release notes for this version."""
+  releaseNotes: String!
+  """The marketplace app availability."""
+  availability: MarketplaceAppAvailability = null
+}
+
+input RemoveAssetLicenseInput {
+  """`Asset` Id."""
+  assetId: ID!
+  """`License` Id."""
+  licenseId: ID!
+}
+
+input RemoveAssetPreviewImageInput {
+  """`Asset` Id."""
+  id: ID!
+}
+
+input RemoveAssetTagsInput {
+  """`Asset` Id."""
+  id: ID!
+  """`Asset` tags."""
+  tags: [TagInput]
+}
+
+input RemoveCollectionAssetsInput {
+  """`Collection` Id."""
+  collectionId: ID!
+  """Ids of the `Assets` to remove from the `Collection`."""
+  assetIds: [ID!]!
+}
+
+input RemoveCustomMetadataInput {
+  """List of parent Ids where `CustomMetadata` should be removed from."""
+  parentIds: [ID!]!
+  """`CustomMetadata` to be removed from the list of parent Ids."""
+  customMetadata: [CustomMetadataInput!]!
+}
+
+input RemoveCustomMetadataPropertyOptionsInput {
+  """`CustomMetadataProperty` Id."""
+  propertyId: ID!
+  """`CustomMetadataPropertyOption` Ids."""
+  optionIds: [ID!]!
+}
+
+input RemoveMetadataValueInput {
+  """`MetadataValue` Id."""
+  id: ID!
+}
+
+input ReopenAssetCommentInput {
+  """`AssetComment` Id to reopen."""
+  id: ID!
+}
+
+input ReplaceAssetInput {
+  """Parent `Asset` Id."""
+  assetId: ID!
+  """Signed file Id returned in `uploadFile`."""
+  fileId: ID!
+  """Skip file's EXIF metadata. When true, it will ignore all file metadata contents."""
+  skipFileMetadata: Boolean = false
+}
+
+input ReplaceAssetVariantInput {
+  """File Id. Signed Id returned in `uploadFile`."""
+  fileId: ID!
+  """Parent `Asset` Id of the `AssetVariant` to replace. Currently, only `Assets` from Logo and Icon `Library` type are supported."""
+  assetId: ID!
+  """`AssetVariant` key to replace. Composed of the color space and the file extension. Examples: RGB:JPG, CMYK:SVG"""
+  key: String!
+}
+
+input ReplyToCommentInput {
+  """`AssetComment` Id of the comment you want to reply to."""
+  id: ID!
+  """`AssetComment` reply content. Can include `User` mentions by wrapping an authorized `Project` `User` Id in the form of `@[user:<id>]` where `<id>` is the `User` integer or global identifier."""
+  reply: String!
+}
+
+input ResolveAssetCommentInput {
+  """`AssetComment` Id to resolve."""
+  id: ID!
+}
+
+input SetCollectionAssetsInput {
+  """`Collection` Id."""
+  collectionId: ID!
+  """Ids of the `Assets` to replace existing `Assets` in the `Collection`. Must be in the same `Library` as the `Collection`."""
+  assetIds: [ID!]!
+}
+
+input SyncAssetTagsInput {
+  """`Asset` Id."""
+  id: ID!
+  """`Asset` tags."""
+  tags: [TagInput]
+}
+
+input TagInput {
+  """Tag name."""
+  value: String!
+}
+
+input UninstallWebhookInput {
+  """Id of the `Webhook` to be uninstalled."""
+  id: ID!
+}
+
+input UpdateAssetDataInput {
+  """`Asset` title or display name."""
+  title: String
+  """Alternative text for the `Asset`. Used by screen readers when the asset is not decorative."""
+  alternativeText: String
+  """`Asset` filename, including extension."""
+  filename: String
+  """`Asset` description."""
+  description: String
+  """Change `Asset` copyright details."""
+  copyright: UpdateCopyrightInput
+  """Modify availability start date. `Asset` becomes available once the defined date is reached."""
+  beginsAt: DateTime
+  """Modify expiry date. `Asset` will expire once the defined date is reached."""
+  expiresAt: DateTime
+  """Represents the Author of the `Asset`. Example: Photographer Name."""
+  author: String
+}
+
+input UpdateAssetInput {
+  """`Asset` Id."""
+  id: ID!
+  """`Asset` data."""
+  data: UpdateAssetDataInput!
+}
+
+input UpdateCollectionDataInput {
+  """Name of the `Collection`."""
+  name: String!
+}
+
+input UpdateCollectionInput {
+  """`Collection` Id."""
+  collectionId: ID!
+  """`Collection` data."""
+  data: UpdateCollectionDataInput!
+}
+
+input UpdateCopyrightInput {
+  """`Asset` copyright status."""
+  status: CopyrightStatus!
+  """`Asset` copyright notice."""
+  notice: String
+}
+
+input UpdateCustomMetadataPropertyDataInput {
+  """`CustomMetadataProperty` display name."""
+  name: String
+  """`CustomMetadataProperty` type details."""
+  type: UpdateCustomMetadataPropertyTypeInput
+  """`CustomMetadataProperty` help text."""
+  helpText: String
+  """Define if `CustomMetadataProperty` is required."""
+  isRequired: Boolean
+  """Set a `CustomMetadataProperty` default value. This setting will be ignored for properties that are not of `SELECT` or `MULTISELECT` type  (use options for these cases instead). Applies to newly uploaded `Assets` only."""
+  defaultValue: String
+}
+
+input UpdateCustomMetadataPropertyInput {
+  """`CustomMetadataProperty` Id."""
+  id: ID!
+  """`CustomMetadataProperty` data."""
+  data: UpdateCustomMetadataPropertyDataInput!
+}
+
+input UpdateCustomMetadataPropertyTypeInput {
+  """Define CustomMetadataProperty` options for `SELECT` or `MULTISELECT` type properties."""
+  options: [UpdateCustomMetadataPropertyTypeOptionInput!]
+}
+
+input UpdateCustomMetadataPropertyTypeOptionInput {
+  """`CustomMetadataPropertyOption` Id. This is an optional field only consider for editing purposes."""
+  id: ID
+  """`CustomMetadataPropertyOption` value."""
+  value: String!
+  """Define `CustomMetadataPropertyOption` as default. Applies to newly created `Assets` only."""
+  isDefault: Boolean = false
+}
+
+input UpdateFolderDataInput {
+  """`Folder` name or display name."""
+  name: String
+  """`Folder` description."""
+  description: String
+}
+
+input UpdateFolderInput {
+  """`Folder` Id."""
+  id: ID!
+  """`Folder` data."""
+  data: UpdateFolderDataInput!
+}
+
+input UploadFileInput {
+  """`File` name. This value will be passed on to the `fileId` input variable used in file mutations such as `createAsset`, `replaceAsset`, `createAttachment` or `addAssetPreviewImage`."""
+  filename: String!
+  """`File` size in bytes. Value must be a positive integer up to 5TB."""
+  size: BigInt!
+}
+
+"""`AssetInterface` for `Asset` returnable types."""
+interface Asset {
+  """`Asset` id."""
+  id: ID!
+  """The `creator` is the `User` who created the asset on Frontify."""
+  creator: User!
+  """DateTime of the `Asset` creation."""
+  createdAt: DateTime!
+  """The `modifier` is the `User` who last modified the asset on Frontify."""
+  modifier: User
+  """DateTime of the `Asset`'s last modification."""
+  modifiedAt: DateTime
+  """Title of the `Asset`."""
+  title: String!
+  """Description of the `Asset`."""
+  description: String
+  """Alternative text for the `Asset`. Used by screen readers when the asset is not decorative."""
+  alternativeText: String
+  """List of `Asset`'s `Attachments`."""
+  attachments: [AssetAttachment]
+  """External Id of the `Asset`."""
+  externalId: ID
+  """List of `Asset`'s tags."""
+  tags: [Tag]
+  """`Asset` copyright details."""
+  copyright: Copyright
+  """`Asset` will be available only during the defined `DateTime` range.When `null` it represents an unspecified start and/or open-ended date."""
+  availability: DateTimeRange!
+  """`Asset` available until date."""
+  expiresAt: DateTime
+  """**DEPRECATED** Metadata values details. This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01"""
+  metadataValues: [MetadataValue] @deprecated(reason: "This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01")
+  """Represents the Author of the `Asset`. Example: Photographer Name."""
+  author: String
+  """Represents the conversion status of the `Asset`. Example: FINISHED."""
+  status: AssetStatusType!
+  """Paginated list of `Asset` items related to `Asset`."""
+  relatedAssets(limit: Int = 25, page: Int = 1): AssetItems!
+  """Paginated list of `AssetRevision` items for `Asset`, newest first."""
+  revisions(limit: Int = 25, page: Int = 1): AssetRevisionItems!
+  """Paginated list of `AssetComment` items for `Asset`."""
+  comments(limit: Int = 25, page: Int = 1, query: AssetCommentQueryInput): AssetCommentItems
+  """`Asset` permissions of the current `User`."""
+  currentUserPermissions: AssetUserPermissions!
+  """List of `CustomMetadataProperty` items and values associated to `Asset`."""
+  customMetadata: [CustomMetadata!]!
+  """`AssetVariant` items of the asset. Only available for assets in icon and logo libraries."""
+  variants(limit: Int = 25, page: Int = 1): AssetVariantItems
+  """`Location` of the `Asset`."""
+  location: AssetLocation!
+  """List of `Asset`'s licenses."""
+  licenses: [License]
+}
+
+"""`AttachmentInterface` for `Attachment` returnable types."""
+interface Attachment {
+  """`Attachment` Id."""
+  id: ID!
+  """The `User` who created the `Attachment` on Frontify."""
+  creator: User!
+  """`DateTime` of the `Attachment` creation."""
+  createdAt: DateTime!
+  """The `User` who last modified the `Attachment` on Frontify."""
+  modifier: User
+  """`DateTime` of the `Attachment`'s last modification."""
+  modifiedAt: DateTime
+  """The `Attachment`'s filename."""
+  filename: String
+  """The `Attachment`'s name or title."""
+  name: String
+  """The `Attachment`'s original file extension."""
+  extension: String
+  """The `Attachment`'s Media (MIME) type."""
+  type: String
+  """The `Attachment`'s size in bytes."""
+  size: BigInt
+  """The `Attachment`'s External Id."""
+  externalId: ID
+}
+
+"""`CommentInterface` for `Comment` returnable types."""
+interface Comment {
+  """The `Comment` identifier."""
+  id: ID!
+  """The `User` representing the `Comment` creator."""
+  creator: User!
+  """The `DateTime` of the `Comment` creation."""
+  createdAt: DateTime!
+  """The last `User` to modify the `Comment`."""
+  modifier: User
+  """The `DateTime` of the `Comment` last modification."""
+  modifiedAt: DateTime
+  """The `Comment` message."""
+  content: String!
+}
+
+"""`CustomMetadataInterface` for `CustomMetadata` returnable types."""
+interface CustomMetadata {
+  """`CustomMetadataProperty` details."""
+  property: CustomMetadataProperty!
+}
+
+"""`CustomMetadataPropertyDependencyInterface` for `CustomMetadataPropertyDependency` returnable types."""
+interface CustomMetadataPropertyDependency {
+  """The `CustomMetadataPropertyDependency` type."""
+  type: String!
+  """The dependee `CustomMetadataProperty` Id."""
+  propertyId: ID!
+}
+
+"""`CustomMetadataPropertyTypeInterface` for `CustomMetadataPropertyType` returnable types."""
+interface CustomMetadataPropertyType {
+  """The `CustomMetadataProperty` type name."""
+  name: String!
+}
+
+"""`CustomMetadataPropertyValueTypeInterface` for `CustomMetadataPropertyValueType` returnable types."""
+interface CustomMetadataPropertyValueType {
+  """The `CustomMetadataPropertyValueType` property type."""
+  propertyType: String!
+}
+
+"""`FolderInterface` for `Folder` returnable types."""
+interface Folder {
+  """`Folder` Id."""
+  id: ID!
+  """`Folder` name."""
+  name: String!
+  """The `User` who created the `Folder`."""
+  creator: User!
+  """`DateTime` of the `Folder` creation."""
+  createdAt: DateTime!
+  """The `User` who last modified the `Folder`."""
+  modifier: User
+  """`DateTime` of the last `Folder` modification."""
+  modifiedAt: DateTime
+  """A list of `Breadcrumb` items representing the parent folders structure for the current `SubFolder`."""
+  breadcrumbs: [Breadcrumb!]!
+  """**DEPRECATED** The `SubFolderItems` of the current `Library`/`Workspace`/`SubFolder`. This field will be removed. Use `folders` instead. | Date: 2025-07-01"""
+  subFolders(limit: Int = 25, page: Int = 1): SubFolderItems! @deprecated(reason: "This field will be removed. Use `folders` instead. | Date: 2025-07-01")
+  """The `FolderItems` of the current `Library`/`Workspace`/`Folder`."""
+  folders(limit: Int = 25, page: Int = 1): FolderItems!
+  """The `AssetItems` in the current `Library`/`Workspace`/`Folder`."""
+  assets(limit: Int = 25, page: Int = 1): AssetItems!
+}
+
+"""`LibraryInterface` for `Library` returnable types."""
+interface Library {
+  """`Library` Id."""
+  id: ID!
+  """`Library` name."""
+  name: String!
+  """`Library` color."""
+  color: RgbaColor
+  """**DEPRECATED** Amount of `Assets` contained in this `Library`. This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01"""
+  assetCount: Int @deprecated(reason: "This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01")
+  """**DEPRECATED** Retrieve list of all `MetadataFields` belonging to this `Library`. This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01"""
+  metadataFields: [MetadataField] @deprecated(reason: "This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01")
+  """Search or list `Assets` in this `Library`."""
+  assets(limit: Int = 25, page: Int = 1, query: AssetQueryInput): AssetItems!
+  """List `Collection` type items within a `Library`."""
+  collections(limit: Int = 25, page: Int = 1): CollectionItems!
+  """Browse the `Library`'s `SubFolderItems` and `AssetItems`."""
+  browse: LibraryRootFolder!
+  """`Library` collaborators."""
+  collaborators: LibraryCollaborators
+  """Check current `User` permissions in a specific `Library`."""
+  currentUserPermissions: LibraryUserPermissions!
+  """List of `CustomMetadataProperty` items belonging to a `Library`."""
+  customMetadataProperties: [CustomMetadataProperty!]!
+  """Fetch `Assets` in this `Library` by their externalId. Requires edit access to the `Library`."""
+  assetsByExternalId(externalId: ID!, limit: Int = 25, cursor: String = null): LibraryAssetsByExternalIdResult!
+  """Retrieve list of all `Licenses` belonging to this `Library`."""
+  licenses: [License]
+}
+
+"""Interface representing a visual `Marking` (highlighted point/area) of an `Asset`."""
+interface Marking {
+  """The `Marking` position in percentage relative to the top left corner of the annotated subject."""
+  position: MarkingPosition!
+  """The `Marking` dimensions in percentage relative to the annotated subject size."""
+  dimensions: MarkingDimensions
+}
+
+"""`NodeInterface` is the base for all types."""
+interface Node {
+  """`Node` Id."""
+  id: ID!
+}
+
+"""`UserInterface` for `User` returnable types."""
+interface User {
+  """`User` Id."""
+  id: ID!
+  """**DEPRECATED** `User` email. This field will be removed. Use `AccountUser.email` instead. | Date: 2025-07-01"""
+  email: Email! @deprecated(reason: "This field will be removed. Use `AccountUser.email` instead. | Date: 2025-07-01")
+  """`User` name."""
+  name: String
+  """**DEPRECATED** `User` avatar. This field will be removed. Use `AccountUser.avatar` instead. | Date: 2025-07-01"""
+  avatar: Url @deprecated(reason: "This field will be removed. Use `AccountUser.avatar` instead. | Date: 2025-07-01")
+}
+
+"""`WebhookInterface` for `Webhook` returnable types."""
+interface Webhook {
+  """`Workspace` Id."""
+  id: ID!
+  """The `creator` is the `User` who created the asset on Frontify."""
+  creator: User!
+  """`DateTime` of the `Asset` creation."""
+  createdAt: DateTime!
+  """The name of the current `Webhook`."""
+  name: String!
+  """The `Url` which will be called by the `Webhook`."""
+  notificationUrl: Url!
+  """The randomly generated secret of the current `Webhook`."""
+  secret: String!
+}
+
+type Account implements Node {
+  """`Account` Id."""
+  id: ID!
+  """List and search `UserItems`."""
+  users(limit: Int = 25, page: Int = 1): UserItems
+  """List and search `UserGroupItems`."""
+  userGroups(limit: Int = 25, page: Int = 1): UserGroupItems
+}
+
+type AccountUser implements Node & User {
+  """`AccountUser` Id."""
+  id: ID!
+  """`AccountUser` email."""
+  email: Email!
+  """`AccountUser` name."""
+  name: String
+  """`AccountUser` avatar."""
+  avatar: Url
+}
+
+type AddAssetLicense {
+  """`Asset` details."""
+  asset: Asset
+  """`License` details."""
+  license: License
+}
+
+type AddAssetMetadataFieldValue {
+  """`MetadataValue` Id."""
+  id: ID!
+  """`User` who created the `MetadataValue`."""
+  creator: User!
+  """`DateTime` of the `MetadataValue` creation."""
+  createdAt: DateTime!
+  """`User` who last modified the `MetadataValue`."""
+  modifier: User
+  """`DateTime` of the `MetadataValue` last modification."""
+  modifiedAt: DateTime
+  """`MetadataField` related to the `MetadataValue`."""
+  metadataField: MetadataField!
+  """`MetadataValue` value."""
+  value: String!
+}
+
+type AddAssetPreviewImage {
+  """The newly created `Asset` preview image processing job response."""
+  job: AssetPreviewProcessingJob!
+}
+
+type AddAssetRelations {
+  """`Asset` details."""
+  asset: Asset!
+  """Related `Assets` details."""
+  relatedAssets: [Asset]
+}
+
+type AddAssetTags {
+  """`Asset` details."""
+  asset: Asset
+}
+
+type AddCollectionAssets {
+  """`Collection` details."""
+  collection: Collection
+}
+
+type AddCustomMetadata {
+  """List of the parent Ids where the new `CustomMetadata` values were added."""
+  parentIds: [ID!]!
+}
+
+type AddCustomMetadataPropertyOptions {
+  """`CustomMetadataProperty` details."""
+  customMetadataProperty: CustomMetadataProperty!
+}
+
+type AssetAttachment implements Node & Attachment {
+  """`Attachment` Id."""
+  id: ID!
+  """The `creator` is the `User` who created this `Attachment`."""
+  creator: User!
+  """`DateTime` of the `Attachment` creation."""
+  createdAt: DateTime!
+  """The `modifier` is the `User` who last modified this `Attachment`."""
+  modifier: User
+  """`DateTime` of the `Attachment`last modification."""
+  modifiedAt: DateTime
+  """Name of the `Attachment`."""
+  name: String
+  """Filename of the `Attachment` `File`."""
+  filename: String
+  """Mediatype (MIME) of the `Attachment`."""
+  type: String
+  """External Id of the `Attachment`."""
+  externalId: ID
+  """Extension of the `Attachment` `File`."""
+  extension: String
+  """Size of the `Attachment` `File` in bytes."""
+  size: BigInt
+  """Signed `Url` to download the original `AssetAttachment` from Frontify."""
+  downloadUrl(validityInDays: Int, permanent: Boolean): Url
+}
+
+type AssetComment implements Node & Comment {
+  """`AssetComment` id."""
+  id: ID!
+  """`User` who created the `AssetComment`."""
+  creator: User!
+  """`DateTime` of the `AssetComment`'s creation."""
+  createdAt: DateTime!
+  """`User` who last modified the `AssetComment`."""
+  modifier: User
+  """`DateTime` of the `AssetComment`'s last modification."""
+  modifiedAt: DateTime
+  """The content of the `AssetComment`. Contains `User` mentions in the format `@[user:USER_ID].`"""
+  content: String!
+  """Mentioned `User` list in the `content` field."""
+  mentionedUsers: [User]!
+  """Indicates if an `AssetComment` is resolved or not."""
+  isResolved: Boolean!
+  """`AssetComment`'s `AssetCommentReplyItems` list."""
+  replies(limit: Int = 25, page: Int = 1): AssetCommentReplyItems!
+  """The `AssetComment` `Marking` if it exists."""
+  marking: Marking
+  """`AssetComment` permissions of the current `User`."""
+  currentUserPermissions: AssetCommentUserPermissions!
+}
+
+type AssetCommentItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of `AssetComment` type comments."""
+  items: [AssetComment]
+}
+
+type AssetCommentReply implements Comment {
+  """The id of the current `AssetCommentReply`."""
+  id: ID!
+  """The `User` representing the creator."""
+  creator: User!
+  """The `DateTime` of creation."""
+  createdAt: DateTime!
+  """The `User` representing the last modifier."""
+  modifier: User
+  """The `DateTime` of the last modification."""
+  modifiedAt: DateTime
+  """The content of the `AssetCommentReply`. Contains `User` mentions in the format `@[user:USER_ID].`"""
+  content: String!
+  """Mentioned `User` list in the `content` field."""
+  mentionedUsers: [User]!
+}
+
+type AssetCommentReplyItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `AssetCommentReply`."""
+  items: [AssetCommentReply]
+}
+
+type AssetCommentUserPermissions {
+  """Check if the current user can edit this `AssetComment`."""
+  canEdit: Boolean!
+  """Check if the current user can delete this `AssetComment`."""
+  canDelete: Boolean!
+  """Check if the current user can reply to this `AssetComment`."""
+  canReply: Boolean!
+}
+
+type AssetItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """`Asset` items list."""
+  items: [Asset]
+}
+
+type AssetLocation {
+  """`Brand` location of the `Asset`."""
+  brand: AssetLocationBrand
+  """`Library` location of the `Asset`."""
+  library: AssetLocationLibrary
+  """`WorkspaceProject` location of the `Asset`."""
+  workspaceProject: AssetLocationWorkspaceProject
+  """`Folder` location of the `Asset`."""
+  folder: AssetLocationFolder
+}
+
+type AssetLocationBrand {
+  """`Brand` Id."""
+  id: ID!
+  """`Brand` name."""
+  name: String!
+}
+
+type AssetLocationFolder {
+  """`Folder` Id."""
+  id: ID!
+  """`Folder` name."""
+  name: String!
+  """A list of `Breadcrumb` items representing the parent folders structure for the current `Folder`."""
+  breadcrumbs: [Breadcrumb!]!
+}
+
+type AssetLocationLibrary {
+  """`Library` Id."""
+  id: ID!
+  """`Library` name."""
+  name: String
+}
+
+type AssetLocationWorkspaceProject {
+  """`WorkspaceProject` Id."""
+  id: ID!
+  """`WorkspaceProject` name."""
+  name: String
+}
+
+type AssetPreviewProcessingJob {
+  """`Asset` Id."""
+  assetId: ID!
+}
+
+type AssetProcessingJob {
+  """`Asset` Id."""
+  assetId: ID!
+}
+
+type AssetRevision {
+  """`AssetRevision` id."""
+  id: ID!
+  """`DateTime` of the `AssetRevision` creation."""
+  createdAt: DateTime!
+  """The `User` who created the `AssetRevision`."""
+  creator: User!
+}
+
+type AssetRevisionItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of `AssetRevision` items."""
+  items: [AssetRevision!]!
+}
+
+type AssetUserPermissions {
+  """Check if current user has `Asset` editing permissions for a specific `Asset`."""
+  canEdit: Boolean!
+  """Check if current user has `Asset` deleting permissions for a specific `Asset`."""
+  canDelete: Boolean!
+  """Check if current user has `Asset` download permissions for a specific `Asset`."""
+  canDownload: Boolean!
+  """Check if current user has `Comment` creation permissions for a specific `Asset`."""
+  canComment: Boolean!
+}
+
+type AssetVariant {
+  """The key to identify the variant."""
+  key: ID!
+  """Filename of the `AssetVariant` `File`."""
+  filename: String
+  """Signed `Url` to download the original `AssetVariant` from Frontify."""
+  downloadUrl(validityInDays: Int, permanent: Boolean): Url
+}
+
+type AssetVariantItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """`AssetVariant` items list."""
+  items: [AssetVariant]!
+}
+
+type AssetVariantProcessingJob {
+  """`AssetVariant` Id."""
+  variantId: ID!
+}
+
+type AttachmentProcessingJob {
+  """`Attachment` Id."""
+  attachmentId: ID!
+}
+
+type Audio implements Node & Asset {
+  """`Asset` id."""
+  id: ID!
+  """The `User` who created the `Asset`."""
+  creator: User!
+  """`DateTime` of the `Asset` creation."""
+  createdAt: DateTime!
+  """The `User` who last modified the `Asset`."""
+  modifier: User
+  """`DateTime` of the `Asset` last modification."""
+  modifiedAt: DateTime
+  """Title of the `Asset`."""
+  title: String!
+  """Description of the `Asset`."""
+  description: String
+  """Alternative text for the `Asset`. Used by screen readers when the asset is not decorative."""
+  alternativeText: String
+  """`Attachment` items linked to `Asset`."""
+  attachments: [AssetAttachment]
+  """External Id of the `Asset`."""
+  externalId: ID
+  """List of `Tag` items linked to `Asset`"""
+  tags: [Tag]
+  """**DEPRECATED** `MetadataValue` items linked to `Asset`. This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01"""
+  metadataValues: [MetadataValue] @deprecated(reason: "This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01")
+  """`Asset` copyright details."""
+  copyright: Copyright
+  """`Asset` will be available only during the defined `DateTime` range. When `null` it represents an unspecified start and/or open-ended date."""
+  availability: DateTimeRange!
+  """`Asset` available until date."""
+  expiresAt: DateTime
+  """Represents the Author of the `Asset`. Example: Photographer Name."""
+  author: String
+  """Represents the conversion status of the `Asset`. Example: FINISHED."""
+  status: AssetStatusType!
+  """Paginated list of `Asset` items related to `Asset`."""
+  relatedAssets(limit: Int = 25, page: Int = 1): AssetItems!
+  """Paginated list of `AssetRevision` items for `Asset`, newest first."""
+  revisions(limit: Int = 25, page: Int = 1): AssetRevisionItems!
+  """Paginated list of `AssetComment` items for `Asset`."""
+  comments(limit: Int = 25, page: Int = 1, query: AssetCommentQueryInput): AssetCommentItems
+  """Current `User` `Asset` permissions."""
+  currentUserPermissions: AssetUserPermissions!
+  """List of `CustomMetadataProperty` items and values associated to `Asset`."""
+  customMetadata: [CustomMetadata!]!
+  """`AssetVariant` items of the asset. Only available for assets in icon and logo libraries."""
+  variants(limit: Int = 25, page: Int = 1): AssetVariantItems
+  """`Location` of the `Asset`."""
+  location: AssetLocation!
+  """Original filename of the `Asset` `File`."""
+  filename: String
+  """Size of the `Asset` `File` in bytes."""
+  size: BigInt
+  """Extension of the `Asset` `File`."""
+  extension: String!
+  """`DateTime` of the `Asset` `File` creation."""
+  fileCreatedAt: DateTime
+  """Signed `Url` to download the original `Audio` type file. Is null if the asset is download-protected and there is no approved and still valid download request."""
+  downloadUrl(validityInDays: Int, permanent: Boolean): Url
+  """Preview `Url` of converted `Audio` file in mp3 format."""
+  previewUrl: Url!
+  """Provides a `Url` for the custom user defined thumbnail or a system generated one when possible."""
+  thumbnailUrl: Url
+  """`License` items linked to `Asset`."""
+  licenses: [License]
+}
+
+type Brand implements Node {
+  """`Brand` Id."""
+  id: ID!
+  """`Brand` name."""
+  name: String!
+  """`Brand` color."""
+  rgbaColor: RgbaColor
+  """`Brand` avatar."""
+  avatar: Url
+  """`Brand` slug."""
+  slug: String
+  """**DEPRECATED** Retrieve all `Projects`. This field will be removed. Use `libraries` or `workspaceProjects` instead. | Date: 2023-01-01"""
+  projects(types: [ProjectType]): [Project] @deprecated(reason: "This field will be removed. Use `libraries` or `workspaceProjects` instead. | Date: 2023-01-01")
+  """Retrieve all `Library` items."""
+  libraries(limit: Int = 25, page: Int = 1): LibraryItems
+  """Retrieve all `Workspace` items."""
+  workspaceProjects(limit: Int = 25, page: Int = 1): WorkspaceItems
+  """`Brand` `CustomMetadataProperty` items list."""
+  customMetadataProperties: [CustomMetadataProperty!]!
+  """Retrieve all `CreativeTemplate` items."""
+  creativeTemplates(limit: Int = 25, page: Int = 1, query: CreativeTemplateQueryInput): CreativeTemplateItems!
+}
+
+type Breadcrumb {
+  """`Breadcrumb` folder id."""
+  id: ID
+  """`Breadcrumb` folder name."""
+  name: String
+}
+
+type CancelExportCreatives {
+  """A list of `CreativeJobs` that have been canceled successfully."""
+  canceledJobs: [CreativeExport]!
+}
+
+type Collection implements Node {
+  """`Collection` Id."""
+  id: ID!
+  """`Collection` name."""
+  name: String!
+  """`Collection`'s `Asset` items list."""
+  assets(limit: Int = 25, page: Int = 1, query: LibraryCollectionQueryInput): AssetItems!
+  """**DEPRECATED** `Collection`'s privacy state setting. This field will be removed. | Date: 2024-01-01"""
+  isPrivate: Boolean @deprecated(reason: "This field will be removed. | Date: 2024-01-01")
+  """`Collection`'s permissions of the current `User`."""
+  currentUserPermissions: CollectionUserPermissions!
+}
+
+type CollectionItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of `Collection` items."""
+  items: [Collection]
+}
+
+type CollectionUserPermissions {
+  """Check if the current user can add `Assets` in this `Collection`."""
+  canAddAssets: Boolean!
+  """Check if the current user can remove `Assets` from this `Collection`."""
+  canRemoveAssets: Boolean!
+}
+
+type ConfigureProjectWebhook {
+  """The configured project webhook."""
+  webhook: ProjectWebhook!
+}
+
+type Copyright {
+  """Asset `copyright` status."""
+  status: CopyrightStatus!
+  """Asset `copyright` notice."""
+  notice: String
+}
+
+type CreateAsset {
+  """The newly created `Asset` processing job response."""
+  job: AssetProcessingJob!
+}
+
+type CreateAssetComment {
+  """`AssetComment` details."""
+  comment: AssetComment!
+}
+
+type CreateAssetVariant {
+  """The newly created `AssetVariant` processing job response."""
+  job: AssetVariantProcessingJob!
+}
+
+type CreateAttachment {
+  """The newly created `Attachment` processing job response."""
+  job: AttachmentProcessingJob!
+}
+
+type CreateCollection {
+  """The newly created `Collection` details."""
+  collection: Collection!
+}
+
+type CreateCustomMetadataProperty {
+  """The newly created `CustomMetadataProperty`."""
+  property: CustomMetadataProperty!
+}
+
+type CreateExternalAsset {
+  """The newly created `Asset` processing job response."""
+  job: AssetProcessingJob!
+}
+
+type CreateFolder {
+  """The newly created `Folder`."""
+  folder: Folder
+}
+
+type CreateLicense {
+  """`License` details."""
+  license: License!
+}
+
+type CreateMetadataField {
+  """Created `MetadataField`."""
+  metadataField: MetadataField!
+}
+
+type CreateWorkspaceProject {
+  """`WorkspaceProject` details."""
+  project: Workspace!
+}
+
+type CreativeColor {
+  """ID of the `Color`."""
+  id: Int!
+  """Name of the `Color`."""
+  name: String
+  """Name of the palette that the `Color` belongs to."""
+  paletteName: String
+  """RGBA color value of the `Color`."""
+  color: RgbaColor!
+}
+
+type CreativeExport {
+  """`CreativeJob` Id."""
+  id: ID!
+  """`CreativeJob` status."""
+  status: CreativeJobStatus!
+  """Generated Creative."""
+  result: CreativeResult
+}
+
+type CreativeResult {
+  """Signed `Url` to download the Creative."""
+  downloadUrl: Url!
+  """List of signed `Url`s to download each page of the Creative."""
+  pageDownloadUrls: [Url!]!
+  """`Asset` details of the stored asset when save-to has been used."""
+  asset: File
+}
+
+type CreativeTemplate {
+  """`CreativeTemplate` id."""
+  id: ID!
+  """**DEPRECATED** Id of the `Brand` of the `CreativeTemplate`. This field will be removed. | Date: 2027-01-01"""
+  brandId: ID! @deprecated(reason: "This field will be removed. | Date: 2027-01-01")
+  """Name of the `CreativeTemplate`."""
+  name: String!
+  """Description of the `CreativeTemplate`."""
+  description: String
+  """Retrieve list of all `CreativeTemplatePage` items belonging to `CreativeTemplate`."""
+  pages: [CreativeTemplatePage!]!
+  """Retrieve list of all `CreativeTemplateExportOption` items belonging to `CreativeTemplate`."""
+  exportOptions: [CreativeTemplateExportOption!]!
+  """Retrieve a `CreativeTemplateVariable` item by `CreativeTemplateVariable` key."""
+  variable(key: String!): CreativeTemplateVariable
+  """Retrieve list of all `CreativeTemplateVariable` items belonging to `CreativeTemplate`."""
+  variables: [CreativeTemplateVariable!]!
+  """**DEPRECATED** Retrieve Asset ID. This field will be removed. | Date: 2027-01-01"""
+  assetId: ID @deprecated(reason: "This field will be removed. | Date: 2027-01-01")
+  """Tags of the `CreativeTemplate`."""
+  tags: [Tag]!
+}
+
+type CreativeTemplateExportOption {
+  """Allowed format for exporting an `CreativeTemplate`, e.g., JPG."""
+  format: CreativeExportFormat
+}
+
+type CreativeTemplateItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `CreativeTemplate`"""
+  items: [CreativeTemplate]!
+}
+
+type CreativeTemplatePage {
+  """Preview URL of `CreativeTemplatePage`."""
+  previewUrl: Url!
+  """Width of the `CreativeTemplatePage`."""
+  width: Int!
+  """Height of the `CreativeTemplatePage`."""
+  height: Int!
+  """`CreativeTemplatePage` unique identifier."""
+  pageIndex: Int!
+  """Name of the `CreativeTemplatePage`."""
+  name: String
+}
+
+type CreativeTemplateVariable {
+  """Key of the `CreativeTemplateVariable`."""
+  key: String!
+  """Name of the `CreativeTemplateVariable`."""
+  name: String!
+  """Description of the `CreativeTemplateVariable`."""
+  description: String
+  """Type of the `CreativeTemplateVariable`."""
+  type: CreativeTemplateVariableType!
+  """Value of the `CreativeTemplateVariable`. See `CreativeTemplateVariableType` for valid formats."""
+  value: Any
+  """Allowed values for `CreativeTemplateVariable` value of type color."""
+  allowedColorValues: [CreativeColor!]!
+  """Number of template items connected to the `CreativeTemplateVariable`."""
+  connectionCount: Int!
+}
+
+type CustomMetadataProperty implements Node {
+  """`CustomMetadataProperty` Id."""
+  id: ID!
+  """`User` who created the `CustomMetadataProperty`."""
+  creator: User!
+  """`DateTime` of the `CustomMetadataProperty` creation."""
+  createdAt: DateTime!
+  """`User` who last modified the `CustomMetadataProperty`."""
+  modifier: User
+  """`DateTime` of the `CustomMetadataProperty`'s last modification."""
+  modifiedAt: DateTime
+  """`CustomMetadataProperty` name."""
+  name: String!
+  """`CustomMetadataProperty` type details."""
+  type: CustomMetadataPropertyType!
+  """`CustomMetadataProperty` help text."""
+  helpText: String
+  """Indicates if a `CustomMetadataProperty` is required to be defined."""
+  isRequired: Boolean!
+  """`CustomMetadataProperty` value set to newly update `Assets` by default."""
+  defaultValue: Any
+}
+
+type CustomMetadataPropertyDateValueType implements CustomMetadataPropertyValueType {
+  """`CustomMetadataPropertyValueType` property type."""
+  propertyType: String!
+}
+
+type CustomMetadataPropertyLongTextValueType implements CustomMetadataPropertyValueType {
+  """`CustomMetadataPropertyValueType` property type."""
+  propertyType: String!
+}
+
+type CustomMetadataPropertyMultiSelectValueType implements CustomMetadataPropertyValueType {
+  """`CustomMetadataPropertyValueType` property type."""
+  propertyType: String!
+  """`MultiSelectPropertyValueType` options."""
+  options: [CustomMetadataPropertyOption]!
+}
+
+type CustomMetadataPropertyNumberValueType implements CustomMetadataPropertyValueType {
+  """`CustomMetadataPropertyValueType` property type."""
+  propertyType: String!
+}
+
+type CustomMetadataPropertyOption {
+  """`CustomMetadataPropertyOption` Id."""
+  id: ID!
+  """`CustomMetadataPropertyOption` value."""
+  value: String!
+  """Indicates if a `CustomMetadataPropertyOption` value is set to newly updated `Assets` by default."""
+  isDefault: Boolean!
+}
+
+type CustomMetadataPropertySelectValueType implements CustomMetadataPropertyValueType {
+  """`CustomMetadataPropertyValueType` property type."""
+  propertyType: String!
+  """`SelectPropertyValueType` options."""
+  options: [CustomMetadataPropertyOption]!
+}
+
+type CustomMetadataPropertySelectValueTypeDependencyTypeEquals implements CustomMetadataPropertyDependency {
+  """`CustomMetadataPropertyDependency` type."""
+  type: String!
+  """The dependee `CustomMetadataProperty` Id."""
+  propertyId: ID!
+  """`CustomMetadataPropertyOption` Id."""
+  propertyOptionId: ID!
+}
+
+type CustomMetadataPropertySelectValueTypeDependencyTypeOneOf implements CustomMetadataPropertyDependency {
+  """`CustomMetadataPropertyDependency` type."""
+  type: String!
+  """The dependee `CustomMetadataProperty` Id."""
+  propertyId: ID!
+  """`CustomMetadataPropertyOption` property option ids."""
+  propertyOptionIds: [ID]!
+}
+
+type CustomMetadataPropertyTextValueType implements CustomMetadataPropertyValueType {
+  """`CustomMetadataPropertyValueType` property type."""
+  propertyType: String!
+}
+
+type CustomMetadataPropertyTypeCatalog implements CustomMetadataPropertyType {
+  """The `CustomMetadataProperty` type name."""
+  name: String!
+}
+
+type CustomMetadataPropertyTypeDate implements CustomMetadataPropertyType {
+  """The `CustomMetadataProperty` type name."""
+  name: String!
+}
+
+type CustomMetadataPropertyTypeLongText implements CustomMetadataPropertyType {
+  """The `CustomMetadataProperty` type name."""
+  name: String!
+}
+
+type CustomMetadataPropertyTypeMultiSelect implements CustomMetadataPropertyType {
+  """The `CustomMetadataProperty` type name."""
+  name: String!
+  """`MULTISELECT` type `CustomMetadataProperty` options."""
+  options: [CustomMetadataPropertyOption]!
+}
+
+type CustomMetadataPropertyTypeNumber implements CustomMetadataPropertyType {
+  """The `CustomMetadataProperty` type name."""
+  name: String!
+}
+
+type CustomMetadataPropertyTypeSelect implements CustomMetadataPropertyType {
+  """The `CustomMetadataProperty` type name."""
+  name: String!
+  """`SELECT` type `CustomMetadataProperty` options."""
+  options: [CustomMetadataPropertyOption]!
+}
+
+type CustomMetadataPropertyTypeText implements CustomMetadataPropertyType {
+  """The `CustomMetadataProperty` type name."""
+  name: String!
+}
+
+type CustomMetadataPropertyTypeUrl implements CustomMetadataPropertyType {
+  """The `CustomMetadataProperty` type name."""
+  name: String!
+}
+
+type CustomMetadataPropertyUrlValueType implements CustomMetadataPropertyValueType {
+  """`CustomMetadataPropertyValueType` property type."""
+  propertyType: String!
+}
+
+type CustomMetadataPropertyValueTypeDependencyTypeFilled implements CustomMetadataPropertyDependency {
+  """`CustomMetadataPropertyDependency` type."""
+  type: String!
+  """The dependee `CustomMetadataProperty` Id."""
+  propertyId: ID!
+}
+
+type CustomMetadataValue implements CustomMetadata {
+  """`CustomMetadataProperty` details."""
+  property: CustomMetadataProperty!
+  """`CustomMetadataProperty` value. For `SELECT`, returns an object with `optionId` and `text`. For `CATALOG`, returns an opaque catalog selection ID string. For other single-value property types, returns the stored value as `String`/`Float`/`Int`/`DateTime`."""
+  value: Any
+}
+
+type CustomMetadataValues implements CustomMetadata {
+  """`CustomMetadataProperty` details."""
+  property: CustomMetadataProperty!
+  """`CustomMetadataProperty` values. Returns an empty list or a list of objects with `optionId` and `text` property values (for `MULTISELECT` type only)."""
+  values: [Any]!
+}
+
+type DateTimeRange {
+  """Start `DateTime` of the range."""
+  from: DateTime
+  """End `DateTime` of the range."""
+  to: DateTime
+}
+
+type DeleteAsset {
+  """The Id of the deleted `Asset`."""
+  id: ID!
+  """**DEPRECATED** `Asset` details. This field will be removed. Use `id` instead. | Date: 2024-01-01"""
+  asset: Asset! @deprecated(reason: "This field will be removed. Use `id` instead. | Date: 2024-01-01")
+}
+
+type DeleteAssetVariant {
+  """`AssetVariant` Id."""
+  id: ID!
+}
+
+type DeleteAttachment {
+  """The Id of the deleted `Attachment`."""
+  id: ID!
+  """**DEPRECATED** `Attachment` details. This field will be removed. Use `id` instead. | Date: 2024-01-01"""
+  attachment: Attachment! @deprecated(reason: "This field will be removed. Use `id` instead. | Date: 2024-01-01")
+}
+
+type DeleteCollection {
+  """The Id of the deleted `Collection`."""
+  id: ID!
+  """**DEPRECATED** `Collection` details. This field will be removed. Use `id` instead. | Date: 2024-01-01"""
+  collection: Collection! @deprecated(reason: "This field will be removed. Use `id` instead. | Date: 2024-01-01")
+}
+
+type DeleteComment {
+  """The Id of the deleted `Comment`."""
+  id: ID!
+  """**DEPRECATED** `Comment` details. This field will be removed. Use `id` instead. | Date: 2024-01-01"""
+  comment: Comment! @deprecated(reason: "This field will be removed. Use `id` instead. | Date: 2024-01-01")
+}
+
+type DeleteCustomMetadataProperty {
+  """The Id of the deleted `CustomMetadataProperty`."""
+  id: ID!
+}
+
+type DeleteFolders {
+  """List of the deleted `Folder` ids."""
+  ids: [ID!]
+}
+
+type DeleteLicense {
+  """The Id of the deleted `License`."""
+  id: ID!
+}
+
+type DeleteMetadataField {
+  """The Id of the deleted `MetadataField`."""
+  id: ID!
+  """**DEPRECATED** Deleted `MetadataField`. This field will be removed. Use `id` instead. | Date: 2024-01-01"""
+  metadataField: MetadataField! @deprecated(reason: "This field will be removed. Use `id` instead. | Date: 2024-01-01")
+}
+
+type Document implements Node & Asset {
+  """`Asset` id."""
+  id: ID!
+  """The `User` who created the `Asset`."""
+  creator: User!
+  """`DateTime` of the `Asset` creation."""
+  createdAt: DateTime!
+  """The `User` who last modified the `Asset`."""
+  modifier: User
+  """`DateTime` of the `Asset` last modification."""
+  modifiedAt: DateTime
+  """Title of the `Asset`."""
+  title: String!
+  """Description of the `Asset`."""
+  description: String
+  """Alternative text for the `Asset`. Used by screen readers when the asset is not decorative."""
+  alternativeText: String
+  """`Attachment` items linked to `Asset`."""
+  attachments: [AssetAttachment]
+  """External Id of the `Asset`."""
+  externalId: ID
+  """List of `Tag` items linked to `Asset`"""
+  tags: [Tag]
+  """**DEPRECATED** `MetadataValue` items linked to `Asset`. This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01"""
+  metadataValues: [MetadataValue] @deprecated(reason: "This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01")
+  """`Asset` copyright details."""
+  copyright: Copyright
+  """`Asset` will be available only during the defined `DateTime` range. When `null` it represents an unspecified start and/or open-ended date."""
+  availability: DateTimeRange!
+  """`Asset` available until date."""
+  expiresAt: DateTime
+  """Represents the Author of the `Asset`. Example: Photographer Name."""
+  author: String
+  """Represents the conversion status of the `Asset`. Example: FINISHED."""
+  status: AssetStatusType!
+  """Paginated list of `Asset` items related to `Asset`."""
+  relatedAssets(limit: Int = 25, page: Int = 1): AssetItems!
+  """Paginated list of `AssetRevision` items for `Asset`, newest first."""
+  revisions(limit: Int = 25, page: Int = 1): AssetRevisionItems!
+  """Paginated list of `AssetComment` items for `Asset`."""
+  comments(limit: Int = 25, page: Int = 1, query: AssetCommentQueryInput): AssetCommentItems
+  """Current `User` `Asset` permissions."""
+  currentUserPermissions: AssetUserPermissions!
+  """List of `CustomMetadataProperty` items and values associated to `Asset`."""
+  customMetadata: [CustomMetadata!]!
+  """`AssetVariant` items of the asset. Only available for assets in icon and logo libraries."""
+  variants(limit: Int = 25, page: Int = 1): AssetVariantItems
+  """`Location` of the `Asset`."""
+  location: AssetLocation!
+  """Original filename of the `Asset` `File`."""
+  filename: String
+  """Size of the `Asset` `File` in bytes."""
+  size: BigInt
+  """Extension of the `Asset` `File`."""
+  extension: String!
+  """`DateTime` of the `Asset` `File` creation."""
+  fileCreatedAt: DateTime
+  """Preview `Url` which has optional `width`, `height` and `page` arguments. If parameters are not specified, a `Url` without any parameters will be returned."""
+  previewUrl(width: Int, height: Int, page: Int): Url!
+  """Provides a `Url` for the custom user defined thumbnail or a system generated one when possible."""
+  thumbnailUrl: Url
+  """Signed `Url` to download the original `Document` type file. Is null if the asset is download-protected and there is no approved and still valid download request."""
+  downloadUrl(validityInDays: Int, permanent: Boolean): Url
+  """`Document` focal point position. Example: `[0.4803, 0.4340]`."""
+  focalPoint: [Float]
+  """`Document` width in pixels."""
+  width: Int!
+  """`Document` height in pixels."""
+  height: Int!
+  """`Document` total number of pages."""
+  pageCount: Int
+  """`License` items linked to `Asset`."""
+  licenses: [License]
+}
+
+type DocumentLibrary implements Node & Library {
+  """`Library`/`Workspace` Id."""
+  id: ID!
+  """`Library`/`Workspace` name."""
+  name: String!
+  """`Library`/`Workspace` color."""
+  color: RgbaColor
+  """**DEPRECATED** Amount of `Assets` contained in the `Library`/`Workspace`. This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01"""
+  assetCount: Int @deprecated(reason: "This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01")
+  """Search or list `Assets` in the `Library`/`Workspace`."""
+  assets(limit: Int = 25, page: Int = 1, query: AssetQueryInput): AssetItems!
+  """**DEPRECATED** `Library`/`Workspace` `MetadataField` items list. This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01"""
+  metadataFields: [MetadataField] @deprecated(reason: "This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01")
+  """Browse the `Library` `SubFolderItems` and `AssetItems`."""
+  browse: LibraryRootFolder!
+  """`Library` collaborators."""
+  collaborators: LibraryCollaborators
+  """`Library` permissions of the current `User`."""
+  currentUserPermissions: LibraryUserPermissions!
+  """Retrieve list of all `CustomMetadataProperty` items belonging to `Library`."""
+  customMetadataProperties: [CustomMetadataProperty!]!
+  """`Library` `Collection` items list."""
+  collections(limit: Int = 25, page: Int = 1): CollectionItems!
+  """Fetch `Assets` in this `Library` by their externalId. Requires edit access to the `Library`."""
+  assetsByExternalId(externalId: ID!, limit: Int = 25, cursor: String = null): LibraryAssetsByExternalIdResult!
+  """`Library`/`Workspace` `License` items list."""
+  licenses: [License]
+}
+
+type EditComment {
+  """`Comment` details."""
+  comment: Comment!
+}
+
+type EmbeddedContent implements Node & Asset {
+  """`Asset` id."""
+  id: ID!
+  """The `User` who created the `Asset`."""
+  creator: User!
+  """`DateTime` of the `Asset` creation."""
+  createdAt: DateTime!
+  """The `User` who last modified the `Asset`."""
+  modifier: User
+  """`DateTime` of the `Asset` last modification."""
+  modifiedAt: DateTime
+  """Title of the `Asset`."""
+  title: String!
+  """Description of the `Asset`."""
+  description: String
+  """Alternative text for the `Asset`. Used by screen readers when the asset is not decorative."""
+  alternativeText: String
+  """`Attachment` items linked to `Asset`."""
+  attachments: [AssetAttachment]
+  """External Id of the `Asset`."""
+  externalId: ID
+  """List of `Tag` items linked to `Asset`"""
+  tags: [Tag]
+  """**DEPRECATED** `MetadataValue` items linked to `Asset`. This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01"""
+  metadataValues: [MetadataValue] @deprecated(reason: "This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01")
+  """`Asset` copyright details."""
+  copyright: Copyright
+  """`Asset` will be available only during the defined `DateTime` range. When `null` it represents an unspecified start and/or open-ended date."""
+  availability: DateTimeRange!
+  """`Asset` available until date."""
+  expiresAt: DateTime
+  """Represents the Author of the `Asset`. Example: Photographer Name."""
+  author: String
+  """Represents the conversion status of the `Asset`. Example: FINISHED."""
+  status: AssetStatusType!
+  """Paginated list of `Asset` items related to `Asset`."""
+  relatedAssets(limit: Int = 25, page: Int = 1): AssetItems!
+  """Paginated list of `AssetRevision` items for `Asset`, newest first."""
+  revisions(limit: Int = 25, page: Int = 1): AssetRevisionItems!
+  """Paginated list of `AssetComment` items for `Asset`."""
+  comments(limit: Int = 25, page: Int = 1, query: AssetCommentQueryInput): AssetCommentItems
+  """Current `User` `Asset` permissions."""
+  currentUserPermissions: AssetUserPermissions!
+  """List of `CustomMetadataProperty` items and values associated to `Asset`."""
+  customMetadata: [CustomMetadata!]!
+  """`AssetVariant` items of the asset. Only available for assets in icon and logo libraries."""
+  variants(limit: Int = 25, page: Int = 1): AssetVariantItems
+  """`Location` of the `Asset`."""
+  location: AssetLocation!
+  """Preview of the embedded content. If the preview is not available, an svg icon will be returned."""
+  previewUrl: Url!
+  """Provides a `Url` for the custom user defined thumbnail or a system generated one when possible."""
+  thumbnailUrl: Url
+  """`License` items linked to `Asset`."""
+  licenses: [License]
+}
+
+type ExportCreative {
+  """The newly created `CreativeJob`."""
+  job: CreativeExport!
+}
+
+type File implements Node & Asset {
+  """`Asset` id."""
+  id: ID!
+  """The `User` who created the `Asset`."""
+  creator: User!
+  """`DateTime` of the `Asset` creation."""
+  createdAt: DateTime!
+  """The `User` who last modified the `Asset`."""
+  modifier: User
+  """`DateTime` of the `Asset` last modification."""
+  modifiedAt: DateTime
+  """Title of the `Asset`."""
+  title: String!
+  """Description of the `Asset`."""
+  description: String
+  """Alternative text for the `Asset`. Used by screen readers when the asset is not decorative."""
+  alternativeText: String
+  """`Attachment` items linked to `Asset`."""
+  attachments: [AssetAttachment]
+  """External Id of the `Asset`."""
+  externalId: ID
+  """List of `Tag` items linked to `Asset`"""
+  tags: [Tag]
+  """**DEPRECATED** `MetadataValue` items linked to `Asset`. This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01"""
+  metadataValues: [MetadataValue] @deprecated(reason: "This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01")
+  """`Asset` copyright details."""
+  copyright: Copyright
+  """`Asset` will be available only during the defined `DateTime` range. When `null` it represents an unspecified start and/or open-ended date."""
+  availability: DateTimeRange!
+  """`Asset` available until date."""
+  expiresAt: DateTime
+  """Represents the Author of the `Asset`. Example: Photographer Name."""
+  author: String
+  """Represents the conversion status of the `Asset`. Example: FINISHED."""
+  status: AssetStatusType!
+  """Paginated list of `Asset` items related to `Asset`."""
+  relatedAssets(limit: Int = 25, page: Int = 1): AssetItems!
+  """Paginated list of `AssetRevision` items for `Asset`, newest first."""
+  revisions(limit: Int = 25, page: Int = 1): AssetRevisionItems!
+  """Paginated list of `AssetComment` items for `Asset`."""
+  comments(limit: Int = 25, page: Int = 1, query: AssetCommentQueryInput): AssetCommentItems
+  """Current `User` `Asset` permissions."""
+  currentUserPermissions: AssetUserPermissions!
+  """List of `CustomMetadataProperty` items and values associated to `Asset`."""
+  customMetadata: [CustomMetadata!]!
+  """`AssetVariant` items of the asset. Only available for assets in icon and logo libraries."""
+  variants(limit: Int = 25, page: Int = 1): AssetVariantItems
+  """`Location` of the `Asset`."""
+  location: AssetLocation!
+  """Original filename of the `Asset` `File`."""
+  filename: String
+  """Size of the `Asset` `File` in bytes."""
+  size: BigInt
+  """Extension of the `Asset` `File`."""
+  extension: String!
+  """`DateTime` of the `Asset` `File` creation."""
+  fileCreatedAt: DateTime
+  """`File` type icon in `svg` format."""
+  previewUrl: Url!
+  """Provides a `Url` for the custom user defined thumbnail or a system generated one when possible."""
+  thumbnailUrl: Url
+  """Signed `Url` to download the original `File` type file. Is null if the asset is download-protected and there is no approved and still valid download request."""
+  downloadUrl(validityInDays: Int, permanent: Boolean): Url
+  """`License` items linked to `Asset`."""
+  licenses: [License]
+}
+
+type FolderItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `Folder`"""
+  items: [Folder]
+}
+
+type Guideline implements Node {
+  """`Guideline` Id."""
+  id: ID!
+  """`Guideline` name."""
+  name: String
+  """`Guideline` color."""
+  color: RgbaColor
+  """`Guideline` internal url."""
+  url: Url!
+  """Paginated list of `LibraryPage` items for `Guideline`."""
+  libraryPages(limit: Int = 25, page: Int = 1): LibraryPageItems!
+}
+
+type IconLibrary implements Node & Library {
+  """`Library`/`Workspace` Id."""
+  id: ID!
+  """`Library`/`Workspace` name."""
+  name: String!
+  """`Library`/`Workspace` color."""
+  color: RgbaColor
+  """**DEPRECATED** Amount of `Assets` contained in the `Library`/`Workspace`. This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01"""
+  assetCount: Int @deprecated(reason: "This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01")
+  """Search or list `Assets` in the `Library`/`Workspace`."""
+  assets(limit: Int = 25, page: Int = 1, query: AssetQueryInput): AssetItems!
+  """**DEPRECATED** `Library`/`Workspace` `MetadataField` items list. This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01"""
+  metadataFields: [MetadataField] @deprecated(reason: "This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01")
+  """Browse the `Library` `SubFolderItems` and `AssetItems`."""
+  browse: LibraryRootFolder!
+  """`Library` collaborators."""
+  collaborators: LibraryCollaborators
+  """`Library` permissions of the current `User`."""
+  currentUserPermissions: LibraryUserPermissions!
+  """Retrieve list of all `CustomMetadataProperty` items belonging to `Library`."""
+  customMetadataProperties: [CustomMetadataProperty!]!
+  """`Library` `Collection` items list."""
+  collections(limit: Int = 25, page: Int = 1): CollectionItems!
+  """Fetch `Assets` in this `Library` by their externalId. Requires edit access to the `Library`."""
+  assetsByExternalId(externalId: ID!, limit: Int = 25, cursor: String = null): LibraryAssetsByExternalIdResult!
+  """`Library`/`Workspace` `License` items list."""
+  licenses: [License]
+}
+
+type Image implements Node & Asset {
+  """`Asset` id."""
+  id: ID!
+  """The `User` who created the `Asset`."""
+  creator: User!
+  """`DateTime` of the `Asset` creation."""
+  createdAt: DateTime!
+  """The `User` who last modified the `Asset`."""
+  modifier: User
+  """`DateTime` of the `Asset` last modification."""
+  modifiedAt: DateTime
+  """Title of the `Asset`."""
+  title: String!
+  """Description of the `Asset`."""
+  description: String
+  """Alternative text for the `Asset`. Used by screen readers when the asset is not decorative."""
+  alternativeText: String
+  """`Attachment` items linked to `Asset`."""
+  attachments: [AssetAttachment]
+  """External Id of the `Asset`."""
+  externalId: ID
+  """List of `Tag` items linked to `Asset`"""
+  tags: [Tag]
+  """**DEPRECATED** `MetadataValue` items linked to `Asset`. This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01"""
+  metadataValues: [MetadataValue] @deprecated(reason: "This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01")
+  """`Asset` copyright details."""
+  copyright: Copyright
+  """`Asset` will be available only during the defined `DateTime` range. When `null` it represents an unspecified start and/or open-ended date."""
+  availability: DateTimeRange!
+  """`Asset` available until date."""
+  expiresAt: DateTime
+  """Represents the Author of the `Asset`. Example: Photographer Name."""
+  author: String
+  """Represents the conversion status of the `Asset`. Example: FINISHED."""
+  status: AssetStatusType!
+  """Paginated list of `Asset` items related to `Asset`."""
+  relatedAssets(limit: Int = 25, page: Int = 1): AssetItems!
+  """Paginated list of `AssetRevision` items for `Asset`, newest first."""
+  revisions(limit: Int = 25, page: Int = 1): AssetRevisionItems!
+  """Paginated list of `AssetComment` items for `Asset`."""
+  comments(limit: Int = 25, page: Int = 1, query: AssetCommentQueryInput): AssetCommentItems
+  """Current `User` `Asset` permissions."""
+  currentUserPermissions: AssetUserPermissions!
+  """List of `CustomMetadataProperty` items and values associated to `Asset`."""
+  customMetadata: [CustomMetadata!]!
+  """`AssetVariant` items of the asset. Only available for assets in icon and logo libraries."""
+  variants(limit: Int = 25, page: Int = 1): AssetVariantItems
+  """`Location` of the `Asset`."""
+  location: AssetLocation!
+  """Original filename of the `Asset` `File`."""
+  filename: String
+  """Size of the `Asset` `File` in bytes."""
+  size: BigInt
+  """Extension of the `Asset` `File`."""
+  extension: String!
+  """`DateTime` of the `Asset` `File` creation."""
+  fileCreatedAt: DateTime
+  """Preview `Url` which has optional `width` and `height` URL parameters. If parameters are not specified, `Url` without any URL parameters will be returned."""
+  previewUrl(width: Int, height: Int): Url!
+  """Provides a `Url` for the custom user defined thumbnail or a system generated one when possible."""
+  thumbnailUrl: Url
+  """Signed `Url` to download the original `Image` type file. Is null if the asset is download-protected and there is no approved and still valid download request."""
+  downloadUrl(validityInDays: Int, permanent: Boolean): Url
+  """`Image` focal point position. Example: `[0.4803, 0.4340]`."""
+  focalPoint: [Float]
+  """`Image` width in pixels."""
+  width: Int!
+  """`Image` height in pixels."""
+  height: Int!
+  """`License` items linked to `Asset`."""
+  licenses: [License]
+}
+
+type InstallProjectWebhook {
+  """`Webhook` details."""
+  webhook: Webhook!
+}
+
+type InviteProjectUser {
+  """`Project` where `User` was invited to."""
+  project: Project
+}
+
+type LibraryAssetsByExternalIdResult {
+  """`Asset` items carrying the externalId."""
+  items: [Asset!]!
+  """Opaque cursor for the next result page; null when there are no further results."""
+  nextCursor: String
+}
+
+type LibraryCollaboratorUserItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of `User` items that have lowest required permissions to collaborate on a `Library`."""
+  items: [User]!
+}
+
+type LibraryCollaborators {
+  """`LibraryCollaboratorUserItems` list."""
+  users(limit: Int = 25, page: Int = 1): LibraryCollaboratorUserItems!
+}
+
+type LibraryItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `Library`"""
+  items: [Library]
+}
+
+type LibraryPage implements Node {
+  """`LibraryPage` Id."""
+  id: ID!
+  """`LibraryPage` title."""
+  title: String!
+  """`LibraryPage` type."""
+  type: LibraryType!
+  """`LibraryPage` `Asset` items list."""
+  assets(limit: Int = 25, page: Int = 1, query: LibraryPageAssetQueryInput): LibraryPageAssetItems!
+}
+
+type LibraryPageAssetItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `Asset`."""
+  items: [Asset]
+}
+
+type LibraryPageItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `LibraryPage`."""
+  items: [LibraryPage]
+}
+
+type LibraryRootFolder {
+  """**DEPRECATED** The `SubFolderItems` of the current `Library`/`Workspace`. This field will be removed. Use `folders` instead. | Date: 2025-07-01"""
+  subFolders(limit: Int = 25, page: Int = 1): SubFolderItems! @deprecated(reason: "This field will be removed. Use `folders` instead. | Date: 2025-07-01")
+  """The `FolderItems` of the current `Library`/`Workspace`."""
+  folders(limit: Int = 25, page: Int = 1): FolderItems!
+  """`Library`/`Workspace`'s `AssetItems` list."""
+  assets(limit: Int = 25, page: Int = 1): AssetItems!
+}
+
+type LibraryUserPermissions {
+  """Check if current `User` has `Asset` creation permissions in a specific `Library`."""
+  canCreateAssets: Boolean!
+  """Check if current `User` has `Collaborator` view permissions in a specific `Library`."""
+  canViewCollaborators: Boolean!
+  """Check if current `User` has `Collection` creation permissions in a specific `Library`."""
+  canCreateCollections: Boolean!
+}
+
+type License {
+  """`License` id."""
+  id: ID!
+  """`License` title."""
+  title: String!
+  """`License` terms."""
+  license: String!
+  """`License` is applied to new assets by default."""
+  addByDefault: Boolean!
+  """`License` requires `User` to accept terms before download."""
+  requireConsensus: Boolean!
+}
+
+type LogoLibrary implements Node & Library {
+  """`Library`/`Workspace` Id."""
+  id: ID!
+  """`Library`/`Workspace` name."""
+  name: String!
+  """`Library`/`Workspace` color."""
+  color: RgbaColor
+  """**DEPRECATED** Amount of `Assets` contained in the `Library`/`Workspace`. This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01"""
+  assetCount: Int @deprecated(reason: "This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01")
+  """Search or list `Assets` in the `Library`/`Workspace`."""
+  assets(limit: Int = 25, page: Int = 1, query: AssetQueryInput): AssetItems!
+  """**DEPRECATED** `Library`/`Workspace` `MetadataField` items list. This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01"""
+  metadataFields: [MetadataField] @deprecated(reason: "This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01")
+  """Browse the `Library` `SubFolderItems` and `AssetItems`."""
+  browse: LibraryRootFolder!
+  """`Library` collaborators."""
+  collaborators: LibraryCollaborators
+  """`Library` permissions of the current `User`."""
+  currentUserPermissions: LibraryUserPermissions!
+  """Retrieve list of all `CustomMetadataProperty` items belonging to `Library`."""
+  customMetadataProperties: [CustomMetadataProperty!]!
+  """`Library` `Collection` items list."""
+  collections(limit: Int = 25, page: Int = 1): CollectionItems!
+  """Fetch `Assets` in this `Library` by their externalId. Requires edit access to the `Library`."""
+  assetsByExternalId(externalId: ID!, limit: Int = 25, cursor: String = null): LibraryAssetsByExternalIdResult!
+  """`Library`/`Workspace` `License` items list."""
+  licenses: [License]
+}
+
+type MarkingDimensions {
+  """The width of the `Marking` area in percentage of the annotated subject total width, relative to the top left corner."""
+  width: Percent
+  """The height of the `Marking` area in percentage of the annotated subject total height, relative to the top left corner."""
+  height: Percent
+}
+
+type MarkingPosition {
+  """The horizontal position of the `Marking` in percentage, in relation to the `Asset` total width."""
+  x: Percent!
+  """The vertical position of the `Marking` in percentage, in relation to the `Asset` total height."""
+  y: Percent!
+}
+
+type MarkingTimeframe {
+  """The start of the `Marking` area in percentage of total video length."""
+  start: Percent
+  """The end of the `Marking` area in percentage of total video length."""
+  end: Percent
+}
+
+type MediaLibrary implements Node & Library {
+  """`Library`/`Workspace` Id."""
+  id: ID!
+  """`Library`/`Workspace` name."""
+  name: String!
+  """`Library`/`Workspace` color."""
+  color: RgbaColor
+  """**DEPRECATED** Amount of `Assets` contained in the `Library`/`Workspace`. This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01"""
+  assetCount: Int @deprecated(reason: "This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01")
+  """Search or list `Assets` in the `Library`/`Workspace`."""
+  assets(limit: Int = 25, page: Int = 1, query: AssetQueryInput): AssetItems!
+  """**DEPRECATED** `Library`/`Workspace` `MetadataField` items list. This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01"""
+  metadataFields: [MetadataField] @deprecated(reason: "This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01")
+  """Browse the `Library` `SubFolderItems` and `AssetItems`."""
+  browse: LibraryRootFolder!
+  """`Library` collaborators."""
+  collaborators: LibraryCollaborators
+  """`Library` permissions of the current `User`."""
+  currentUserPermissions: LibraryUserPermissions!
+  """Retrieve list of all `CustomMetadataProperty` items belonging to `Library`."""
+  customMetadataProperties: [CustomMetadataProperty!]!
+  """`Library` `Collection` items list."""
+  collections(limit: Int = 25, page: Int = 1): CollectionItems!
+  """Fetch `Assets` in this `Library` by their externalId. Requires edit access to the `Library`."""
+  assetsByExternalId(externalId: ID!, limit: Int = 25, cursor: String = null): LibraryAssetsByExternalIdResult!
+  """`Library`/`Workspace` `License` items list."""
+  licenses: [License]
+}
+
+type MetadataField {
+  """**DEPRECATED** `MetadataField` Id. This field will be removed. Use `CustomMetadataProperty.id` instead. | Date: 2026-07-01"""
+  id: ID! @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.id` instead. | Date: 2026-07-01")
+  """**DEPRECATED** `User` who created the `MetadataField`. This field will be removed. Use `CustomMetadataProperty.creator` instead. | Date: 2026-07-01"""
+  creator: User! @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.creator` instead. | Date: 2026-07-01")
+  """**DEPRECATED** `DateTime` of the `MetadataField` creation. This field will be removed. Use `CustomMetadataProperty.createdAt` instead. | Date: 2026-07-01"""
+  createdAt: DateTime! @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.createdAt` instead. | Date: 2026-07-01")
+  """**DEPRECATED** `User` who last modified `MetadataField`. This field will be removed. Use `CustomMetadataProperty.modifier` instead. | Date: 2026-07-01"""
+  modifier: User @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.modifier` instead. | Date: 2026-07-01")
+  """**DEPRECATED** `DateTime` of the `MetadataField`'s last modification. This field will be removed. Use `CustomMetadataProperty.modifiedAt` instead. | Date: 2026-07-01"""
+  modifiedAt: DateTime @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.modifiedAt` instead. | Date: 2026-07-01")
+  """**DEPRECATED** `MetadataField`'s name. This field will be removed. Use `CustomMetadataProperty.name` instead. | Date: 2026-07-01"""
+  label: String! @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.name` instead. | Date: 2026-07-01")
+  """**DEPRECATED** `MetadataField`'s type. This field will be removed. Use `CustomMetadataProperty.type.name` instead. | Date: 2026-07-01"""
+  type: String! @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.type.name` instead. | Date: 2026-07-01")
+  """**DEPRECATED** Possible values for `SELECT` type `MetadataField`. This field will be removed. Use `CustomMetadataProperty.type.options` instead. | Date: 2026-07-01"""
+  values: [MetadataFieldValues] @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.type.options` instead. | Date: 2026-07-01")
+  """**DEPRECATED** Optional default value of the `MetadataField`. This field will be removed. Use `CustomMetadataProperty.defaultValue` instead. | Date: 2026-07-01"""
+  defaultValue: String @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.defaultValue` instead. | Date: 2026-07-01")
+  """**DEPRECATED** Allow multiple values in `SELECT` type `MetadataField`. This field will be removed. | Date: 2026-07-01"""
+  allowMultipleValues: Boolean! @deprecated(reason: "This field will be removed. | Date: 2026-07-01")
+  """**DEPRECATED** Allow an empty value as a valid `SELECT` type `MetadataField` value. This field will be removed. | Date: 2026-07-01"""
+  allowEmptyValue: Boolean! @deprecated(reason: "This field will be removed. | Date: 2026-07-01")
+  """**DEPRECATED** Allow users to search for `MetadataField` values. This field will be removed. Use `CustomMetadataProperty.isSearchable` instead. | Date: 2026-07-01"""
+  isSearchable: Boolean! @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.isSearchable` instead. | Date: 2026-07-01")
+  """**DEPRECATED** Allow users to edit `MetadataField` values. This field will be removed. | Date: 2026-07-01"""
+  isEditable: Boolean! @deprecated(reason: "This field will be removed. | Date: 2026-07-01")
+  """**DEPRECATED** Show/hide `MetadataField` values. This field will be removed. Use `CustomMetadataProperty.isViewable` instead. | Date: 2026-07-01"""
+  isVisible: Boolean! @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.isViewable` instead. | Date: 2026-07-01")
+}
+
+type MetadataFieldValues {
+  """**DEPRECATED** Value of `SELECT` type `Metadata Field`. This field will be removed. Use `CustomMetadataProperty.type.options.value` instead. | Date: 2026-07-01"""
+  value: String @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.type.options.value` instead. | Date: 2026-07-01")
+  """**DEPRECATED** Default value for `SELECT` type `Metadata Field`. This field will be removed. Use `CustomMetadataProperty.type.options.isDefault` instead. | Date: 2026-07-01"""
+  default: Boolean @deprecated(reason: "This field will be removed. Use `CustomMetadataProperty.type.options.isDefault` instead. | Date: 2026-07-01")
+}
+
+type MetadataValue {
+  """**DEPRECATED** `MetadataValue` Id. This field will be removed. | Date: 2026-07-01"""
+  id: ID! @deprecated(reason: "This field will be removed. | Date: 2026-07-01")
+  """**DEPRECATED** `User` who created the `MetadataValue`. This field will be removed. | Date: 2026-07-01"""
+  creator: User! @deprecated(reason: "This field will be removed. | Date: 2026-07-01")
+  """**DEPRECATED** `DateTime` of the `MetadataValue` creation. This field will be removed. | Date: 2026-07-01"""
+  createdAt: DateTime! @deprecated(reason: "This field will be removed. | Date: 2026-07-01")
+  """**DEPRECATED** `User` who last modified the `MetadataValue`. This field will be removed. | Date: 2026-07-01"""
+  modifier: User @deprecated(reason: "This field will be removed. | Date: 2026-07-01")
+  """**DEPRECATED** `DateTime` of the `MetadataValue`'s last modification. This field will be removed. | Date: 2026-07-01"""
+  modifiedAt: DateTime @deprecated(reason: "This field will be removed. | Date: 2026-07-01")
+  """**DEPRECATED** `MetadataField` associated to `MetadataValue`. This field will be removed. | Date: 2026-07-01"""
+  metadataField: MetadataField! @deprecated(reason: "This field will be removed. | Date: 2026-07-01")
+  """**DEPRECATED** `MetadataValue`'s value. This field will be removed. Use `CustomMetadataValueType.value` instead. | Date: 2026-07-01"""
+  value: String! @deprecated(reason: "This field will be removed. Use `CustomMetadataValueType.value` instead. | Date: 2026-07-01")
+}
+
+type MoveAssets {
+  """List of moved `Asset` items."""
+  assets: [Asset!]
+}
+
+type MoveFolders {
+  """List of moved `Folder` ids."""
+  ids: [ID!]
+}
+
+type MultiPageMarking implements Marking {
+  """The `Marking` position in percent relative to the top left corner of the `Asset`."""
+  position: MarkingPosition!
+  """The `Marking` dimensions in percent of `Asset` dimensions."""
+  dimensions: MarkingDimensions
+  """The `Asset` page where the `Marking` is set."""
+  page: Int
+}
+
+type ProjectWebhook implements Node & Webhook {
+  """`Webhook` Id."""
+  id: ID!
+  """The `creator` is the `User` who created the `Webhook`."""
+  creator: User!
+  """DateTime of the `Webhook` creation."""
+  createdAt: DateTime!
+  """`Webhook` name."""
+  name: String!
+  """The `Url` which will be called by the `Webhook`"""
+  notificationUrl: Url!
+  """The randomly generated secret of the current `Webhook`."""
+  secret: String!
+  """Returns the associated `Project`."""
+  project: Project!
+}
+
+type PublishMarketplaceApp {
+  """The ID of the published marketplace app."""
+  id: String!
+}
+
+type RemoveAssetLicense {
+  """`Asset` details."""
+  asset: Asset
+  """`License` details."""
+  license: License
+}
+
+type RemoveAssetPreviewImage {
+  """`Asset` details."""
+  asset: Asset
+}
+
+type RemoveAssetTags {
+  """`Asset` details."""
+  asset: Asset
+}
+
+type RemoveCollectionAssets {
+  """`Collection` details."""
+  collection: Collection
+}
+
+type RemoveCustomMetadata {
+  """List of parentIds with removed `CustomMetadata` values."""
+  parentIds: [ID!]!
+}
+
+type RemoveCustomMetadataPropertyOptions {
+  """`CustomMetadataProperty` details."""
+  customMetadataProperty: CustomMetadataProperty!
+}
+
+type RemoveMetadataValue {
+  """`MetadataValue` Id."""
+  id: ID!
+  """`User` who created the `MetadataValue`."""
+  creator: User!
+  """`DateTime` of the `MetadataValue` creation."""
+  createdAt: DateTime!
+  """`User` who last modified the `MetadataValue`."""
+  modifier: User
+  """`DateTime` of the `MetadataValue` last modification."""
+  modifiedAt: DateTime
+  """`MetadataField` related to the `MetadataValue`."""
+  metadataField: MetadataField!
+  """`MetadataValue` value."""
+  value: String!
+}
+
+type ReopenAssetComment {
+  """The reopened `AssetComment`."""
+  comment: AssetComment
+}
+
+type ReplaceAsset {
+  """The newly created `Asset` processing job response."""
+  job: AssetProcessingJob!
+}
+
+type ReplaceAssetVariant {
+  """The newly created `AssetVariant` processing job response."""
+  job: AssetVariantProcessingJob!
+}
+
+type ReplyToComment {
+  """`AssetCommentReply` details."""
+  reply: AssetCommentReply!
+}
+
+type ResolveAssetComment {
+  """The resolved `AssetComment`."""
+  comment: AssetComment
+}
+
+type RgbaColor {
+  """Red color channel value."""
+  red: RgbColorChannel!
+  """Green color channel value."""
+  green: RgbColorChannel!
+  """Blue color channel value."""
+  blue: RgbColorChannel!
+  """Alpha channel value."""
+  alpha: Percent!
+}
+
+type RootMutation {
+  """**DEPRECATED** Add a new relation between an existing `Asset` and an existing `MetadataField` with its value. The value will be automatically created and linked to its `MetadataField`. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`. This field will be removed. Use `addCustomMetadata` instead. | Date: 2026-07-01"""
+  addAssetMetadataFieldValue(input: AddAssetMetadataFieldValueInput!): AddAssetMetadataFieldValue @deprecated(reason: "This field will be removed. Use `addCustomMetadata` instead. | Date: 2026-07-01")
+  """Add new `Asset` preview image. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  addAssetPreviewImage(input: AddAssetPreviewImageInput!): AddAssetPreviewImage
+  """Relate existing `Asset`s. The `relatedAssetIds` input field list is limited to 100 ids per request and cannot contain the same `assetId` input field value. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  addAssetRelations(input: AddAssetRelationsInput!): AddAssetRelations
+  """Add new `Asset` tags. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  addAssetTags(input: AddAssetTagsInput!): AddAssetTags
+  """Add `Assets` to the existing `Collection`. Requires `basic:write` scope to be accessible and `Collection` permission level `EDIT`."""
+  addCollectionAssets(input: AddCollectionAssetsInput!): AddCollectionAssets
+  """Add `CustomMetadata` values to a supported parent (`Asset` | `WorkspaceProject`). Requires `basic:write` scope to be accessible and permission level `EDIT` for the respective parent."""
+  addCustomMetadata(input: AddCustomMetadataInput!): AddCustomMetadata
+  """Add options to an existing `SELECT` or `MULTISELECT` type `CustomMetadataProperty`. RequiresRequires `basic:write` scope to be accessible and `CustomMetadataProperty` permission level `EDIT`."""
+  addCustomMetadataPropertyOptions(input: AddCustomMetadataPropertyOptionsInput!): AddCustomMetadataPropertyOptions
+  """Create a new `Asset`. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`."""
+  createAsset(input: CreateAssetInput!): CreateAsset
+  """Create a new `Asset` `Comment`. Requires `basic:write` scope to be accessible and `Asset` permission level `COMMENT`."""
+  createAssetComment(input: CreateAssetCommentInput!): CreateAssetComment
+  """Create a new `AssetVariant`. Only supported for assets in icon and logo libraries. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  createAssetVariant(input: CreateAssetVariantInput!): CreateAssetVariant
+  """Create a new `Attachment`. Attachments require a valid parent ID string. This mutation currently only supports attachments for parents of `Asset` type. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  createAttachment(input: CreateAttachmentInput!): CreateAttachment
+  """Create a new `Collection`. Currently supported for `Library` type parent entities only. Requires `basic:write` scope to be accessible and `Collection` permission level `EDIT`."""
+  createCollection(input: CreateCollectionInput!): CreateCollection
+  """Create a new `CustomMetadataProperty`. RequiresRequires `basic:write` scope to be accessible and `Brand` or `Project` permission level `EDIT`."""
+  createCustomMetadataProperty(input: CreateCustomMetadataPropertyInput!): CreateCustomMetadataProperty
+  """Create a new External `Asset` from a url. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`."""
+  createExternalAsset(input: CreateExternalAssetInput!): CreateExternalAsset
+  """Create a new `Folder`. Requires `basic:write` scope to be accessible and `Project` or `Folder` permission level `EDIT`."""
+  createFolder(input: CreateFolderInput!): CreateFolder
+  """**DEPRECATED** Create a new `Project` `MetadataField` with your desired configuration. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`. This field will be removed. Use `createCustomMetadataProperty` instead. | Date: 2026-07-01"""
+  createMetadataField(input: CreateMetadataFieldInput!): CreateMetadataField @deprecated(reason: "This field will be removed. Use `createCustomMetadataProperty` instead. | Date: 2026-07-01")
+  """Create a new `Workspace` type `Project`. Requires `basic:write` scope to be accessible."""
+  createWorkspaceProject(input: CreateWorkspaceProjectInput!): CreateWorkspaceProject
+  """Delete an existing `Asset`. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  deleteAsset(input: DeleteAssetInput!): DeleteAsset
+  """Delete an existing `Attachment`. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  deleteAttachment(input: DeleteAttachmentInput!): DeleteAttachment
+  """Delete an existing `AssetVariant`. Only supported for assets in icon and logo libraries. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  deleteAssetVariant(input: DeleteAssetVariantInput!): DeleteAssetVariant
+  """Delete an existing `Collection`. Requires `basic:write` scope to be accessible and `Collection` permission level `EDIT`."""
+  deleteCollection(input: DeleteCollectionInput!): DeleteCollection
+  """Delete an existing `Comment`. This will update and/or remove all relations to that `Comment`. Requires `basic:write` scope to be accessible and `Asset` permission level `COMMENT`."""
+  deleteComment(input: DeleteCommentInput!): DeleteComment
+  """Delete an existing `CustomMetadataProperty`."""
+  deleteCustomMetadataProperty(input: DeleteCustomMetadataPropertyInput!): DeleteCustomMetadataProperty
+  """Delete the existing `Folders`. This will delete all of the `Assets` and `SubFolders` within the `Folders`. Requires `basic:write` scope to be accessible and `Folder` permission level `EDIT`."""
+  deleteFolders(input: DeleteFoldersInput!): DeleteFolders
+  """**DEPRECATED** Delete an existing `Project` `MetadataField`. Existing `MetadataField`'s with the same value with be automatically removed. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`. This field will be removed. Use `deleteCustomMetadataProperty` instead. | Date: 2026-07-01"""
+  deleteMetadataField(input: DeleteMetadataFieldInput!): DeleteMetadataField @deprecated(reason: "This field will be removed. Use `deleteCustomMetadataProperty` instead. | Date: 2026-07-01")
+  """Edit an existing `AssetComment`. Requires `basic:write` scope to be accessible and `Asset` permission level `COMMENT`."""
+  editComment(input: EditCommentInput!): EditComment
+  """Invite `Project` user. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`. Limitations: Does not work if User Provisioning feature is enabled."""
+  inviteProjectUser(input: InviteProjectUserInput!): InviteProjectUser
+  """Move existing `Asset` item(s) to the given `Library`, `Workspace` or `Folder` destination. Only moves within the same `Library`/`Workspace` are supported by this operation. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  moveAssets(input: MoveAssetsInput!): MoveAssets
+  """Move existing `Folder` item(s) to the given `Library`, `Workspace` or `Folder` destination. This operation will move all of the `Asset` item(s) and `SubFolder` item(s) within the provided `Folder` item(s). Only moves within the same `Library`/`Workspace` are supported by this operation. Requires `basic:write` scope to be accessible and `Folder` permission level `EDIT`."""
+  moveFolders(input: MoveFoldersInput!): MoveFolders
+  """Remove existing `Asset` preview image. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  removeAssetPreviewImage(input: RemoveAssetPreviewImageInput!): RemoveAssetPreviewImage
+  """Remove existing `Asset` tags. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  removeAssetTags(input: RemoveAssetTagsInput!): RemoveAssetTags
+  """Remove `Assets` from the existing `Collection`. Requires `basic:write` scope to be accessible and `Collection` permission level `EDIT`."""
+  removeCollectionAssets(input: RemoveCollectionAssetsInput!): RemoveCollectionAssets
+  """Remove `CustomMetadata` values from a supported parent (`Asset` | `WorkspaceProject`). Requires `basic:write` scope to be accessible and permission level `EDIT` for the respective parent."""
+  removeCustomMetadata(input: RemoveCustomMetadataInput!): RemoveCustomMetadata
+  """Remove options from an existing `SELECT` or `MULTISELECT` type `CustomMetadataProperty`. RequiresRequires `basic:write` scope to be accessible and `CustomMetadataProperty` permission level `EDIT`."""
+  removeCustomMetadataPropertyOptions(input: RemoveCustomMetadataPropertyOptionsInput!): RemoveCustomMetadataPropertyOptions
+  """**DEPRECATED** Remove existing `MetadataField` value.Existing relations to that `MetadataField` with the same value will be automatically removed.Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`. This field will be removed. Use `removeCustomMetadata` instead. | Date: 2026-07-01"""
+  removeMetadataValue(input: RemoveMetadataValueInput!): RemoveMetadataValue @deprecated(reason: "This field will be removed. Use `removeCustomMetadata` instead. | Date: 2026-07-01")
+  """Export `CreativeTemplate` with provided parameters. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`."""
+  exportCreative(input: ExportCreativeInput!): ExportCreative
+  """Reopens a resolved `AssetComment`. Requires `basic:write` scope to be accessible and `Comment` permission level `EDIT`."""
+  reopenAssetComment(input: ReopenAssetCommentInput!): ReopenAssetComment
+  """Replace an existing `Asset`. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  replaceAsset(input: ReplaceAssetInput!): ReplaceAsset
+  """Replace an existing `AssetVariant`. Only supported for assets in icon and logo libraries. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  replaceAssetVariant(input: ReplaceAssetVariantInput!): ReplaceAssetVariant
+  """Add a new reply to an existing `Asset` `Comment`. Requires `basic:write` scope to be accessible and `Asset` permission level `COMMENT`."""
+  replyToComment(input: ReplyToCommentInput!): ReplyToComment
+  """Resolve an open `AssetComment`. Requires `basic:write` scope to be accessible and `Comment` permission level `EDIT`."""
+  resolveAssetComment(input: ResolveAssetCommentInput!): ResolveAssetComment
+  """Replace the existing set of the `Assets` in the `Collection` with the new set of the `Assets`. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`."""
+  setCollectionAssets(input: SetCollectionAssetsInput!): SetCollectionAssets
+  """Sync `Asset` tags. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  syncAssetTags(input: SyncAssetTagsInput!): SyncAssetTags
+  """Update an existing `Asset`. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  updateAsset(input: UpdateAssetInput!): UpdateAsset
+  """Update an existing `Collection`. Requires `basic:write` scope to be accessible and `Collection` permission level `EDIT`."""
+  updateCollection(input: UpdateCollectionInput!): UpdateCollection
+  """Update an existing `CustomMetadataProperty`. RequiresRequires `basic:write` scope to be accessible and `CustomMetadataProperty` permission level `EDIT`."""
+  updateCustomMetadataProperty(input: UpdateCustomMetadataPropertyInput!): UpdateCustomMetadataProperty
+  """Update an existing `Folder`. Requires `basic:write` scope to be accessible and `Folder` permission level `EDIT`."""
+  updateFolder(input: UpdateFolderInput!): UpdateFolder
+  """
+  Upload a new file. Requires `basic:write` scope to be accessible
+
+Creates a temporary unique file Id and returns presigned URLs for uploading a binary file in multiple parts.
+After the upload is completed, this Id can be used (**once only**) to permanently link the file to a specific type (e.g., Asset, Attachment, Revision) via another mutation.
+
+When `chunkSize` is provided as `null` (to be the future default), the number of upload parts and thus their corresponding part size will be computed dynamically based on the specified file size, following these rules:
+- Maxmum of 1000 parts.
+- For files of 5TB (maximum): 1000 parts of 5GB each.
+- For files less than 15MB: 1 single part of 15MB.
+- Otherwise: an inclusive range of [1, 1000] parts of [15MB, 5GB] each.
+  """
+  uploadFile(input: UploadFileInput!): UploadFile
+  """Cancels `CreativeJobs` by provided parameters. `CreativeJob` can be canceled prior to the `RENDERING` status. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`."""
+  cancelExportCreatives(input: CancelExportCreativesInput!): CancelExportCreatives
+  """Create a new `Project` `License`. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`."""
+  createLicense(input: CreateLicenseInput!): CreateLicense
+  """Delete an existing `Project` `License`. This will remove all relations to that `License`. Requires `basic:write` scope to be accessible and `Project` permission level `EDIT`."""
+  deleteLicense(input: DeleteLicenseInput!): DeleteLicense
+  """Add a relation between an existing `Asset` and `License`. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  addAssetLicense(input: AddAssetLicenseInput!): AddAssetLicense
+  """Remove an existing relation between an `Asset` and a `License`. Requires `basic:write` scope to be accessible and `Asset` permission level `EDIT`."""
+  removeAssetLicense(input: RemoveAssetLicenseInput!): RemoveAssetLicense
+  """Publish a marketplace app with the specified release notes and availability."""
+  publishMarketplaceApp(input: PublishMarketplaceAppInput!): PublishMarketplaceApp
+  """Install `Webhook`. Requires `basic:write` and `webhook:write` scopes to be accessible and `Project` permission level `EDIT`."""
+  installProjectWebhook(input: InstallProjectWebhookInput!): InstallProjectWebhook
+  """`configureProjectWebhook` mutation field"""
+  configureProjectWebhook(input: ConfigureProjectWebhookInput!): ConfigureProjectWebhook
+  """Uninstall `Webhook`. Requires `basic:write` and `webhook:write` scopes to be accessible and `Project` permission level `EDIT`."""
+  uninstallWebhook(input: UninstallWebhookInput!): UninstallWebhook
+}
+
+type RootQuery {
+  """Get the current `User`."""
+  currentUser: User!
+  """Retrieve current `Account` details."""
+  account: Account!
+  """**DEPRECATED** Retrieve `Project` details by Id. This field will be removed. Use `library` or `workspaceProject` instead. | Date: 2023-01-01"""
+  project(id: ID!): Project @deprecated(reason: "This field will be removed. Use `library` or `workspaceProject` instead. | Date: 2023-01-01")
+  """Retrieve `Library` details by Id."""
+  library(id: ID!): Library
+  """Retrieve `WorkspaceProject` details by Id."""
+  workspaceProject(id: ID!): Workspace
+  """Retrieve `Assets` details by Ids."""
+  assets(ids: [ID!]!): [Asset]
+  """Retrieve `Asset` details by Id."""
+  asset(id: ID!): Asset
+  """Retrieve a `CreativeTemplate` item by Id."""
+  creativeTemplate(id: ID!): CreativeTemplate
+  """Retrieve a `CreativeExport` item by `CreativeJob` Id."""
+  creativeExport(id: ID!): CreativeExport
+  """Retrieve a `Brand` by its Id."""
+  brand(id: ID!): Brand
+  """Retrieve `Brand` list for current `Account`."""
+  brands: [Brand]
+  """Retrieve `Node` details by Id."""
+  node(id: ID!): Node
+  """Retrieve `WebhookItems` related to current `Account`."""
+  webhooks(limit: Int = 25, page: Int = 1): WebhookItems
+}
+
+type SetCollectionAssets {
+  """`Collection` details."""
+  collection: Collection
+}
+
+type SimpleMarking implements Marking {
+  """The `Marking` position in percent relative to the top left corner of the `Asset`."""
+  position: MarkingPosition!
+  """The `Marking` dimensions in percent of `Asset` dimensions."""
+  dimensions: MarkingDimensions
+}
+
+type SubFolder implements Node & Folder {
+  """`SubFolder` Id."""
+  id: ID!
+  """`SubFolder` name."""
+  name: String!
+  """The `User` who created the `SubFolder`."""
+  creator: User!
+  """`DateTime` of the `SubFolder` creation."""
+  createdAt: DateTime!
+  """The `User` who last modified the `SubFolder`."""
+  modifier: User
+  """`DateTime` of the last `SubFolder` modification."""
+  modifiedAt: DateTime
+  """A list of `Breadcrumb` items representing the parent folders structure for the current `SubFolder`."""
+  breadcrumbs: [Breadcrumb!]!
+  """**DEPRECATED** The `SubFolderItems` of the current `SubFolder`. This field will be removed. Use `folders` instead. | Date: 2025-07-01"""
+  subFolders(limit: Int = 25, page: Int = 1): SubFolderItems! @deprecated(reason: "This field will be removed. Use `folders` instead. | Date: 2025-07-01")
+  """The `FolderItems` of the current `Folder`."""
+  folders(limit: Int = 25, page: Int = 1): FolderItems!
+  """The `AssetItems` in the current `SubFolder`."""
+  assets(limit: Int = 25, page: Int = 1): AssetItems!
+}
+
+type SubFolderItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `SubFolder`"""
+  items: [SubFolder]
+}
+
+type SyncAssetTags {
+  """`Asset` details."""
+  asset: Asset
+}
+
+type Tag {
+  """`Tag` value."""
+  value: String!
+  """`Tag` source indicating how the tag was linked to the `Asset`. AUTO: created by AI `Asset` recognition. MANUAL: manually added."""
+  source: TagSource
+}
+
+type UninstallWebhook {
+  """**DEPRECATED** `Webhook` details. This field will be removed. Use `id` instead. | Date: 2026-07-01"""
+  webhook: Webhook! @deprecated(reason: "This field will be removed. Use `id` instead. | Date: 2026-07-01")
+  """The Id of the deleted `Webhook`."""
+  id: ID!
+}
+
+type UpdateAsset {
+  """`Asset` details."""
+  asset: Asset
+}
+
+type UpdateCollection {
+  """`Collection` details."""
+  collection: Collection!
+}
+
+type UpdateCustomMetadataProperty {
+  """Name of the updated `CustomMetadataProperty`."""
+  property: CustomMetadataProperty!
+}
+
+type UpdateFolder {
+  """`Folder` details."""
+  folder: Folder
+}
+
+type UploadFile {
+  """Signed Id."""
+  id: ID!
+  """List of presigned urls to upload the file parts."""
+  urls: [Url]!
+}
+
+type UserGroup implements Node {
+  """`UserGroup` Id."""
+  id: ID!
+  """`UserGroup` name."""
+  name: String
+  """`UserGroup`'s `UserItems`."""
+  users(limit: Int = 25, page: Int = 1): UserItems
+}
+
+type UserGroupItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `UserGroup`."""
+  items: [UserGroup]
+}
+
+type UserItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """`User` items list."""
+  items: [User]
+}
+
+type Video implements Node & Asset {
+  """`Asset` id."""
+  id: ID!
+  """The `User` who created the `Asset`."""
+  creator: User!
+  """`DateTime` of the `Asset` creation."""
+  createdAt: DateTime!
+  """The `User` who last modified the `Asset`."""
+  modifier: User
+  """`DateTime` of the `Asset` last modification."""
+  modifiedAt: DateTime
+  """Title of the `Asset`."""
+  title: String!
+  """Description of the `Asset`."""
+  description: String
+  """Alternative text for the `Asset`. Used by screen readers when the asset is not decorative."""
+  alternativeText: String
+  """`Attachment` items linked to `Asset`."""
+  attachments: [AssetAttachment]
+  """External Id of the `Asset`."""
+  externalId: ID
+  """List of `Tag` items linked to `Asset`"""
+  tags: [Tag]
+  """**DEPRECATED** `MetadataValue` items linked to `Asset`. This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01"""
+  metadataValues: [MetadataValue] @deprecated(reason: "This field will be removed. Use `customMetadata` instead. | Date: 2026-07-01")
+  """`Asset` copyright details."""
+  copyright: Copyright
+  """`Asset` will be available only during the defined `DateTime` range. When `null` it represents an unspecified start and/or open-ended date."""
+  availability: DateTimeRange!
+  """`Asset` available until date."""
+  expiresAt: DateTime
+  """Represents the Author of the `Asset`. Example: Photographer Name."""
+  author: String
+  """Represents the conversion status of the `Asset`. Example: FINISHED."""
+  status: AssetStatusType!
+  """Paginated list of `Asset` items related to `Asset`."""
+  relatedAssets(limit: Int = 25, page: Int = 1): AssetItems!
+  """Paginated list of `AssetRevision` items for `Asset`, newest first."""
+  revisions(limit: Int = 25, page: Int = 1): AssetRevisionItems!
+  """Paginated list of `AssetComment` items for `Asset`."""
+  comments(limit: Int = 25, page: Int = 1, query: AssetCommentQueryInput): AssetCommentItems
+  """Current `User` `Asset` permissions."""
+  currentUserPermissions: AssetUserPermissions!
+  """List of `CustomMetadataProperty` items and values associated to `Asset`."""
+  customMetadata: [CustomMetadata!]!
+  """`AssetVariant` items of the asset. Only available for assets in icon and logo libraries."""
+  variants(limit: Int = 25, page: Int = 1): AssetVariantItems
+  """`Location` of the `Asset`."""
+  location: AssetLocation!
+  """Original filename of the `Asset` `File`."""
+  filename: String
+  """Size of the `Asset` `File` in bytes."""
+  size: BigInt
+  """Extension of the `Asset` `File`."""
+  extension: String!
+  """`DateTime` of the `Asset` `File` creation."""
+  fileCreatedAt: DateTime
+  """Preview `Url` of converted `Video` in mp4 format."""
+  previewUrl(width: Int, height: Int): Url!
+  """Provides a `Url` for the custom user defined thumbnail or a system generated one when possible."""
+  thumbnailUrl: Url
+  """Signed `Url` to download the original `Video` type file. Is null if the asset is download-protected and there is no approved and still valid download request."""
+  downloadUrl(validityInDays: Int, permanent: Boolean): Url
+  """`Video` width in pixels."""
+  width: Int!
+  """`Video` height in pixels."""
+  height: Int!
+  """`Video` duration in seconds."""
+  duration: Float!
+  """`Video` bitrate in bits per second."""
+  bitrate: Int!
+  """`License` items linked to `Asset`."""
+  licenses: [License]
+}
+
+type VideoMarking implements Marking {
+  """The `Marking` position in percent relative to the top left corner of the `Asset`."""
+  position: MarkingPosition!
+  """The `Marking` dimensions in percent of `Asset` dimensions."""
+  dimensions: MarkingDimensions
+  """The timeframe of the `Marking`. Applicable to `Video` type `Asset` items only."""
+  timeframe: MarkingTimeframe
+}
+
+type WebhookItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `Webhook`."""
+  items: [Webhook]
+}
+
+type Workspace implements Node {
+  """`Library`/`Workspace` Id."""
+  id: ID!
+  """`Library`/`Workspace` name."""
+  name: String!
+  """`Library`/`Workspace` color."""
+  color: RgbaColor
+  """**DEPRECATED** Amount of `Assets` contained in the `Library`/`Workspace`. This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01"""
+  assetCount: Int @deprecated(reason: "This field will be removed. Use `assets`.`total` instead. | Date: 2024-07-01")
+  """Search or list `Assets` in the `Library`/`Workspace`."""
+  assets(limit: Int = 25, page: Int = 1, query: AssetQueryInput): AssetItems!
+  """**DEPRECATED** `Library`/`Workspace` `MetadataField` items list. This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01"""
+  metadataFields: [MetadataField] @deprecated(reason: "This field will be removed. Use `customMetadataProperties` instead. | Date: 2026-07-01")
+  """Browse the `Workspace`'s `SubFolderItems` and `AssetItems`."""
+  browse: WorkspaceRootFolder!
+  """`Workspace` collaborators."""
+  collaborators: WorkspaceCollaborators
+  """`Workspace` permissions of the current `User`."""
+  currentUserPermissions: WorkspaceUserPermissions!
+  """List of `CustomMetadataProperty` items and values associated to `Workspace`."""
+  customMetadata: [CustomMetadata!]!
+  """`Library`/`Workspace` `License` items list."""
+  licenses: [License]
+}
+
+type WorkspaceCollaboratorUserItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of `User` items that have lowest required permissions to collaborate on a `Workspace`."""
+  items: [User]
+}
+
+type WorkspaceCollaborators {
+  """`WorkspaceCollaboratorUserItems` list."""
+  users(limit: Int = 25, page: Int = 1): WorkspaceCollaboratorUserItems!
+}
+
+type WorkspaceItems {
+  """Total amount of results."""
+  total: Int!
+  """Current page number."""
+  page: Int!
+  """Number of results per page."""
+  limit: Int!
+  """Indicates if a next page is available or not"""
+  hasNextPage: Boolean!
+  """List of type `Workspace`."""
+  items: [Workspace]
+}
+
+type WorkspaceRootFolder {
+  """**DEPRECATED** The `SubFolderItems` of the current `Library`/`Workspace`. This field will be removed. Use `folders` instead. | Date: 2025-07-01"""
+  subFolders(limit: Int = 25, page: Int = 1): SubFolderItems! @deprecated(reason: "This field will be removed. Use `folders` instead. | Date: 2025-07-01")
+  """The `FolderItems` of the current `Library`/`Workspace`."""
+  folders(limit: Int = 25, page: Int = 1): FolderItems!
+  """`Library`/`Workspace`'s `AssetItems` list."""
+  assets(limit: Int = 25, page: Int = 1): AssetItems!
+}
+
+type WorkspaceUserPermissions {
+  """Check if current `User` has `Asset` creation permissions in a specific `Workspace`."""
+  canCreateAssets: Boolean!
+  """Check if current `User` has `Collaborator` view permissions in a specific `Workspace`."""
+  canViewCollaborators: Boolean!
+}
+
+"""The `Any` scalar type represents any of the supported types: Null, Integer, Float, String, Boolean, Enum, Object and List."""
+scalar Any
+
+"""The `BigInt` scalar type represents big integers (2^63 signed)."""
+scalar BigInt
+
+"""The `DateTime` scalar type represents date and time data in RFC 3339 format with millisecond precision (i.e., 2001-12-31T22:10:30.000+00:00)."""
+scalar DateTime
+
+"""The `Email` scalar type represents email addresses."""
+scalar Email
+
+"""Represents an integer or a float value between `0` and `1`, corresponding to percentage values between 0% and 100% (both inclusive)."""
+scalar Percent
+
+"""The `RgbColorChannel` scalar represents an integer value between 0 and 255 (both inclusive)."""
+scalar RgbColorChannel
+
+"""The `Url` scalar type represents absolute urls."""
+scalar Url
+
+union Project = MediaLibrary | IconLibrary | LogoLibrary | DocumentLibrary | Workspace

@@ -1,0 +1,155 @@
+generated: '2026-08-13'
+method: derived
+source: graphql/frontify.graphql
+description: >-
+  Entity-relationship graph of the Frontify API, derived from the live GraphQL schema.
+  Every type, field and cardinality below was read out of graphql/frontify.graphql —
+  nothing is inferred from marketing copy. Cardinality is read from the schema shape: a
+  field returning a `*Items` wrapper (total/page/limit/hasNextPage/items) or a list is
+  has_many; a field returning a single object type is has_one.
+identity:
+  scheme: opaque-graphql-global-id
+  interface: Node
+  field: id (ID!)
+  resolver: RootQuery.node(id) -> Node
+  note: >-
+    Frontify uses opaque global IDs on a `Node` interface — there are no Stripe-style
+    typed id prefixes, so an id string does not tell you what it points at. 23 types
+    implement Node.
+  external_ids:
+    field: Asset.externalId
+    lookup: Library.assetsByExternalId(externalId, limit, cursor)
+    note: >-
+      The one place a caller's own identifier can be attached to a Frontify object and
+      looked up again — the integration key for syncing a DAM with an external system.
+interfaces:
+  - name: Node
+    role: global identity
+    implementors: 23
+  - name: Asset
+    role: the central content entity
+    implementors: [Image, Video, Audio, Document, File, EmbeddedContent]
+    note: >-
+      Asset is polymorphic. Every concrete asset type carries the same core fields
+      (title, description, alternativeText, tags, copyright, availability, expiresAt,
+      status, creator/modifier, attachments, relatedAssets, customMetadata) plus
+      type-specific fields. Agents must handle all six __typename values.
+  - name: Library
+    role: the container that holds assets
+    implementors: [MediaLibrary, LogoLibrary, IconLibrary, DocumentLibrary]
+    note: A Brand's libraries are typed by content class, not configured generically.
+  - name: Folder
+    role: hierarchical placement within a library or workspace
+    implementors: [SubFolder, LibraryRootFolder, WorkspaceRootFolder]
+  - name: User
+    role: actor
+    implementors: [AccountUser, and collaborator user projections]
+  - name: Webhook
+    role: event subscription
+    implementors: [ProjectWebhook]
+entities:
+  - name: Account
+    root_query: RootQuery.account
+    summary: The Frontify tenant. Holds users and user groups.
+  - name: Brand
+    root_query: [RootQuery.brand, RootQuery.brands]
+    summary: A brand within the account — the top of the content hierarchy.
+  - name: Library
+    summary: Typed asset container (media / logo / icon / document) belonging to a brand.
+  - name: Workspace
+    root_query: RootQuery.workspaceProject
+    summary: >-
+      Project-style container (the successor to the deprecated `Project`). Holds assets,
+      folders, collaborators and licenses.
+  - name: Asset
+    root_query: [RootQuery.asset, RootQuery.assets]
+    summary: The unit of content — image, video, audio, document, file or embedded content.
+  - name: Collection
+    summary: Virtual grouping of assets inside a library; does not move the originals.
+  - name: AssetComment
+    summary: Comment or visual annotation on an asset, with threaded replies and OPEN/RESOLVED status.
+  - name: CustomMetadataProperty
+    summary: >-
+      Tenant-defined metadata schema attached to a library, workspace or brand. Replaces
+      the deprecated MetadataField family (removal date 2026-07-01).
+  - name: Guideline
+    summary: A brand portal / guideline document, composed of LibraryPage pages.
+  - name: CreativeTemplate
+    root_query: RootQuery.creativeTemplate
+    summary: A parameterised design template that can be exported with variable values.
+  - name: CreativeExport
+    root_query: RootQuery.creativeExport
+    summary: An asynchronous render job produced from a CreativeTemplate.
+  - name: ProjectWebhook
+    root_query: RootQuery.webhooks
+    summary: Event subscription on a project, with a secret and a subscribeTo event list.
+  - name: License
+    summary: Usage license attachable to assets.
+  - name: UserGroup
+    summary: Account-level grouping of users.
+relationships:
+  - {from: Account, type: has_many, to: User, via: users}
+  - {from: Account, type: has_many, to: UserGroup, via: userGroups}
+  - {from: Brand, type: has_many, to: Library, via: libraries}
+  - {from: Brand, type: has_many, to: Workspace, via: workspaceProjects}
+  - {from: Brand, type: has_many, to: CustomMetadataProperty, via: customMetadataProperties}
+  - {from: Brand, type: has_many, to: CreativeTemplate, via: creativeTemplates}
+  - {from: Library, type: has_many, to: Asset, via: assets}
+  - {from: Library, type: has_many, to: Collection, via: collections}
+  - {from: Library, type: has_many, to: CustomMetadataProperty, via: customMetadataProperties}
+  - {from: Library, type: has_one, to: LibraryRootFolder, via: browse}
+  - {from: Library, type: has_one, to: LibraryCollaborators, via: collaborators}
+  - {from: Library, type: has_many, to: License, via: licenses}
+  - {from: Workspace, type: has_many, to: Asset, via: assets}
+  - {from: Workspace, type: has_one, to: WorkspaceRootFolder, via: browse}
+  - {from: Workspace, type: has_one, to: WorkspaceCollaborators, via: collaborators}
+  - {from: Workspace, type: has_many, to: License, via: licenses}
+  - {from: Folder, type: has_many, to: Folder, via: folders}
+  - {from: Folder, type: has_many, to: Asset, via: assets}
+  - {from: Asset, type: has_many, to: AssetAttachment, via: attachments}
+  - {from: Asset, type: has_many, to: AssetComment, via: comments}
+  - {from: Asset, type: has_many, to: Asset, via: relatedAssets}
+  - {from: Asset, type: has_many, to: Tag, via: tags}
+  - {from: Asset, type: has_one, to: Copyright, via: copyright}
+  - {from: Asset, type: has_one, to: User, via: creator}
+  - {from: Asset, type: has_one, to: User, via: modifier}
+  - {from: AssetComment, type: has_many, to: AssetCommentReply, via: replies}
+  - {from: Guideline, type: has_many, to: LibraryPage, via: libraryPages}
+  - {from: ProjectWebhook, type: has_one, to: Project, via: project, note: "Project is the schema's one union — MediaLibrary | IconLibrary | LogoLibrary | DocumentLibrary | Workspace"}
+  - {from: ProjectWebhook, type: has_one, to: User, via: creator}
+hierarchy: |
+  Account
+    └── Brand
+          ├── Library  (MediaLibrary | LogoLibrary | IconLibrary | DocumentLibrary)
+          │     ├── browse -> LibraryRootFolder -> Folder* -> Asset*
+          │     ├── Collection*        (virtual grouping, no move)
+          │     ├── CustomMetadataProperty*
+          │     └── License*
+          ├── Workspace                (successor to the deprecated Project)
+          │     ├── browse -> WorkspaceRootFolder -> Folder* -> Asset*
+          │     └── collaborators -> users*
+          ├── Guideline* -> LibraryPage*
+          └── CreativeTemplate* -> CreativeExport*
+  Asset (Image | Video | Audio | Document | File | EmbeddedContent)
+    ├── AssetAttachment*
+    ├── AssetComment* -> AssetCommentReply*
+    ├── Tag*, Copyright, customMetadata*
+    └── relatedAssets*, variants, revisions
+counts:
+  node_types: 23
+  object_types: 165
+  interfaces: 13
+  input_objects: 88
+  enums: 21
+  derived_relationships: 29
+deprecation_pressure:
+  note: >-
+    The metadata subsystem is mid-migration and the whole MetadataField / MetadataValue
+    family is dated for removal 2026-07-01 in favour of CustomMetadataProperty /
+    customMetadata. `Project` -> `Library`/`Workspace` has been dated for removal since
+    2023-01-01 and is still in the schema. Any data model built against Frontify should
+    target the CustomMetadata* types. See lifecycle/frontify-lifecycle.yml.
+cross_links:
+  - graphql/frontify-graphql.yml
+  - conventions/frontify-conventions.yml
+  - asyncapi/frontify-webhooks.yml

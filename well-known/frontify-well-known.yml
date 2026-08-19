@@ -1,18 +1,68 @@
-generated: '2026-07-19'
-method: searched
+generated: '2026-08-13'
+method: probed
+source: live GET of /.well-known/* on every Frontify host in apis.yml plus the MCP host
 description: >-
-  Probe of the /.well-known/ discovery surface for the Frontify web + developer
-  hosts. The marketing host (www.frontify.com) returns 404 for every probed
-  path. The developer host (developer.frontify.com) is a single-page app that
-  answers 200 with an identical ~8.9KB HTML shell for arbitrary paths, so its
-  200s are recorded as present-but-not-a-real-document (not saved). No real
-  well-known document (security.txt, OIDC, oauth-authorization-server,
-  api-catalog, ai-plugin) was found — no pointer is wired.
+  Probe of the /.well-known/ discovery surface across the Frontify web, API, developer
+  and MCP hosts. THE FINDING THIS ROUND: the official hosted MCP server at
+  mcp.frontify-integrations.com serves three real, machine-readable discovery documents —
+  RFC 8414 OAuth authorization server metadata, RFC 9728 OAuth protected resource
+  metadata, and an OIDC-shaped discovery document. Those are saved verbatim here and are
+  what the WellKnown pointer asserts. The marketing host (www.frontify.com) 404s every
+  path with an "Invalid .well-known request" body. The developer host
+  (developer.frontify.com) is a single-page app that answers 200 with an identical ~9KB
+  HTML shell for arbitrary paths, so its 200s are recorded as SPA false positives and are
+  NOT saved and NOT counted. api.frontify.com 404s every path.
 hosts:
+  - host: https://mcp.frontify-integrations.com
+    role: official hosted MCP server
+    documents:
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: frontify-oauth-authorization-server.json
+        spec: RFC 8414
+        real_document: true
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        file: frontify-oauth-protected-resource.json
+        spec: RFC 9728
+        real_document: true
+      - path: /.well-known/openid-configuration
+        status: 200
+        file: frontify-openid-configuration.json
+        spec: OpenID Connect Discovery shape
+        real_document: true
+        note: >-
+          Served by the MCP authorization server; adds `openid` to scopes_supported.
+          It is the MCP server's AS metadata, not a Frontify-instance IdP discovery doc.
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /.well-known/mcp.json
+        status: 404
+  - host: https://api.frontify.com
+    role: GraphQL API host
+    documents:
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
   - host: https://www.frontify.com
+    role: marketing / product site
     documents:
       - path: /.well-known/security.txt
         status: 404
+        note: body is an "Invalid .well-known request" HTML stub
       - path: /.well-known/openid-configuration
         status: 404
       - path: /.well-known/oauth-authorization-server
@@ -21,8 +71,38 @@ hosts:
         status: 404
       - path: /.well-known/ai-plugin.json
         status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404
+      - path: /llms.txt
+        status: 404
   - host: https://developer.frontify.com
+    role: developer portal (Frontify's own guidelines product; JS-rendered SPA)
     documents:
       - path: /.well-known/security.txt
         status: 200
-        note: SPA HTML shell, not a real RFC 9116 security.txt — not saved.
+        real_document: false
+        note: SPA HTML shell, not an RFC 9116 security.txt — not saved, not counted.
+      - path: /.well-known/agent-card.json
+        status: 200
+        real_document: false
+        note: SPA HTML shell (<!DOCTYPE html>), not an agent card — rejected, no a2a/ artifact written.
+      - path: /.well-known/agent.json
+        status: 200
+        real_document: false
+        note: SPA HTML shell — rejected.
+      - path: /llms.txt
+        status: 200
+        real_document: false
+        note: SPA HTML shell titled "Developer-Relations" — no llms.txt is published.
+      - path: /openapi.json
+        status: 200
+        real_document: false
+        note: SPA HTML shell — Frontify publishes no OpenAPI. The contract is GraphQL (see graphql/).
+security_txt: none
+note: >-
+  Frontify does publish a security/vulnerability-disclosure surface, it is just not at
+  /.well-known/security.txt — it is a human page at https://www.frontify.com/en/security/
+  (BugCrowd program + security@frontify.com). See
+  security/frontify-vulnerability-disclosure.yml.

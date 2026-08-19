@@ -1,0 +1,324 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  mcp/frontify-mcp.yml (54 tools transcribed from Frontify's own pack pages) bound to
+  graphql/frontify.graphql (the live, anonymously-introspected Frontify GraphQL schema)
+description: >-
+  Binds each tool of Frontify's hosted MCP server to the GraphQL field(s) that back it.
+  Frontify publishes no OpenAPI, so the GraphQL schema is the machine-readable core here
+  and a tool's real input contract is its backing field's arguments / input object.
+  Every GraphQL name in `graphql:` below was grepped out of graphql/frontify.graphql —
+  none were invented.
+surfaces:
+  graphql:
+    endpoint: https://{instance}.frontify.com/graphql
+    schema: graphql/frontify.graphql
+    introspection: open (anonymous), data fields permission-gated
+    note: >-
+      The introspected slice exposes 13 root queries and 57 root mutations. Frontify's
+      own reference (frontify.github.io/graphql-reference) states the full schema has 18
+      queries and 102 mutations, so an anonymous caller sees roughly half the mutation
+      surface. Tools listed under `not_in_visible_schema[]` are almost certainly backed
+      by fields in that hidden remainder — they are NOT evidence of a missing capability.
+  mcp:
+    endpoint: https://mcp.frontify-integrations.com/mcp
+    manifest: mcp/frontify-mcp.yml
+    tools_list: gated (HTTP 401, OAuth `mcp:tools` required) — inputSchemas not captured
+  openapi:
+    present: false
+    note: Frontify publishes no OpenAPI/REST contract.
+crosswalk:
+  - tool: get_current_user
+    category: identity
+    graphql: [RootQuery.currentUser]
+    binding: graphql-query
+    confidence: high
+  - tool: get_account
+    category: identity
+    graphql: [RootQuery.account]
+    binding: graphql-query
+    confidence: high
+  - tool: get_collaborators
+    category: identity
+    graphql: [LibraryCollaborators.users, WorkspaceCollaborators.users]
+    binding: graphql-nested-field
+    confidence: medium
+    note: >-
+      No root collaborator query; the tool reads `collaborators.users` on a Library or
+      Workspace (Library.collaborators -> LibraryCollaborators.users).
+  - tool: list_brands
+    category: discovery
+    graphql: [RootQuery.brands]
+    binding: graphql-query
+    confidence: high
+  - tool: get_brand
+    category: discovery
+    graphql: [RootQuery.brand]
+    binding: graphql-query
+    confidence: high
+  - tool: get_library
+    category: discovery
+    graphql: [RootQuery.library]
+    binding: graphql-query
+    confidence: high
+  - tool: get_project
+    category: discovery
+    graphql: [RootQuery.workspaceProject]
+    binding: graphql-query
+    confidence: high
+    note: >-
+      RootQuery.project also exists but is @deprecated (removal date 2023-01-01) in
+      favour of `library` / `workspaceProject`.
+  - tool: create_project
+    category: structure
+    graphql: [RootMutation.createWorkspaceProject]
+    binding: graphql-mutation
+    confidence: high
+  - tool: search_assets
+    category: assets
+    graphql: [Library.assets, Workspace.assets]
+    binding: graphql-nested-field
+    confidence: medium
+    note: Backed by the asset connections with AssetQueryInput/AssetQueryFilterSortType filtering.
+  - tool: get_assets_data
+    category: assets
+    graphql: [RootQuery.assets, RootQuery.asset]
+    binding: graphql-query
+    confidence: high
+  - tool: display_assets
+    category: assets
+    graphql: [RootQuery.assets]
+    binding: graphql-query
+    confidence: medium
+    note: >-
+      Same data as get_assets_data; the difference is MCP-side presentation (renders a
+      widget and is the only path that yields download/open-on-Frontify links).
+  - tool: read_asset
+    category: assets
+    graphql: [RootQuery.asset]
+    binding: composite
+    confidence: medium
+    note: Resolves the asset then fetches the Frontify CDN preview URL as inline image content.
+  - tool: move_assets
+    category: assets
+    graphql: [RootMutation.moveAssets]
+    binding: graphql-mutation
+    confidence: high
+  - tool: update_asset
+    category: assets
+    graphql: [RootMutation.updateAsset]
+    binding: graphql-mutation
+    confidence: high
+  - tool: add_asset_tags
+    category: assets
+    graphql: [RootMutation.addAssetTags]
+    binding: graphql-mutation
+    confidence: high
+    note: Schema also offers removeAssetTags and syncAssetTags, which have no MCP tool.
+  - tool: upload_file
+    category: assets
+    graphql: [RootMutation.uploadFile]
+    binding: graphql-mutation
+    confidence: high
+    note: Step 1 of Frontify's 3-step upload; returns presigned URLs the client PUTs to.
+  - tool: create_asset
+    category: assets
+    graphql: [RootMutation.createAsset]
+    binding: graphql-mutation
+    confidence: high
+    note: Step 3 of the 3-step upload.
+  - tool: create_asset_from_url
+    category: assets
+    graphql: [RootMutation.uploadFile, RootMutation.createAsset]
+    binding: composite
+    confidence: medium
+    note: >-
+      Server-side composite — downloads the URL, runs the upload handshake and creates
+      the asset in one call. RootMutation.createExternalAsset is a different thing (it
+      links an external asset rather than importing it) and has no MCP tool.
+  - tool: add_asset_revision
+    category: assets
+    graphql: [RootMutation.replaceAsset]
+    binding: graphql-mutation
+    confidence: medium
+  - tool: add_asset_revision_from_url
+    category: assets
+    graphql: [RootMutation.uploadFile, RootMutation.replaceAsset]
+    binding: composite
+    confidence: medium
+  - tool: get_asset_comments
+    category: collaboration
+    graphql: [Asset.comments, Image.comments, Video.comments, Document.comments, File.comments, Audio.comments]
+    binding: graphql-nested-field
+    confidence: high
+    note: >-
+      `comments(limit, page, query: AssetCommentQueryInput)` on every asset type; the
+      status filter maps to AssetCommentStatusFilter (OPEN | RESOLVED | ALL).
+  - tool: create_asset_comment
+    category: collaboration
+    graphql: [RootMutation.createAssetComment]
+    binding: graphql-mutation
+    confidence: high
+  - tool: reply_to_comment
+    category: collaboration
+    graphql: [RootMutation.replyToComment]
+    binding: graphql-mutation
+    confidence: high
+  - tool: get_collection_assets
+    category: structure
+    graphql: [Library.collections]
+    binding: graphql-nested-field
+    confidence: medium
+    note: >-
+      `collections` exists on the Library interface (and each concrete library type);
+      Workspace has no collections field in the visible schema.
+  - tool: get_folder_contents
+    category: structure
+    graphql: [LibraryRootFolder.folders, WorkspaceRootFolder.folders, Folder.folders]
+    binding: graphql-nested-field
+    confidence: medium
+    note: Reached through `browse` on a Library or Workspace, then `folders` / `assets`.
+  - tool: create_collection
+    category: structure
+    graphql: [RootMutation.createCollection]
+    binding: graphql-mutation
+    confidence: high
+  - tool: add_collection_assets
+    category: structure
+    graphql: [RootMutation.addCollectionAssets]
+    binding: graphql-mutation
+    confidence: high
+    note: Schema also offers setCollectionAssets and removeCollectionAssets, with no MCP tool.
+  - tool: create_folder
+    category: structure
+    graphql: [RootMutation.createFolder]
+    binding: graphql-mutation
+    confidence: high
+  - tool: set_custom_metadata
+    category: metadata
+    graphql: [RootMutation.addCustomMetadata]
+    binding: graphql-mutation
+    confidence: high
+  - tool: create_custom_metadata_property
+    category: metadata
+    graphql: [RootMutation.createCustomMetadataProperty]
+    binding: graphql-mutation
+    confidence: high
+  - tool: get_templates_data
+    category: creative
+    graphql: [RootQuery.creativeTemplate, Brand.creativeTemplates]
+    binding: graphql-query
+    confidence: high
+  - tool: list_creative_templates
+    category: creative
+    graphql: [Brand.creativeTemplates]
+    binding: graphql-nested-field
+    confidence: high
+  - tool: display_templates
+    category: creative
+    graphql: [Brand.creativeTemplates, RootQuery.creativeTemplate]
+    binding: graphql-query
+    confidence: medium
+    note: Same data as get_templates_data; difference is MCP-side widget rendering.
+  - tool: export_creative
+    category: creative
+    graphql: [RootMutation.exportCreative]
+    binding: graphql-mutation
+    confidence: high
+  - tool: get_creative_export
+    category: creative
+    graphql: [RootQuery.creativeExport]
+    binding: graphql-query
+    confidence: high
+  - tool: cancel_creative_exports
+    category: creative
+    graphql: [RootMutation.cancelExportCreatives]
+    binding: graphql-mutation
+    confidence: high
+mcp_only:
+  - tool: generate_url
+    reason: >-
+      Constructs a Frontify web-application deep link from ids. Pure client-side URL
+      composition; no GraphQL field involved.
+not_in_visible_schema:
+  note: >-
+    These tools have no counterpart anywhere in the anonymously-introspected schema — no
+    Target, Workflow, ColorPalette, FontFamily or Guideline-listing type or field exists
+    in it. They are presumed backed by the ~45 mutations and ~5 queries the public
+    introspection does not expose. Recorded here rather than in mcp_only[] because the
+    honest statement is "not visible to us", not "not in GraphQL".
+  tools:
+    - {tool: get_targets, category: targeting}
+    - {tool: add_asset_targets, category: targeting}
+    - {tool: remove_asset_targets, category: targeting}
+    - {tool: get_workflow_statuses, category: workflow}
+    - {tool: create_workflow_task, category: workflow}
+    - {tool: move_workflow_task, category: workflow}
+    - {tool: delete_workflow_task, category: workflow}
+    - {tool: add_workflow_checklist_item, category: workflow}
+    - {tool: update_workflow_checklist_item, category: workflow}
+    - {tool: remove_workflow_checklist_item, category: workflow}
+    - {tool: list_guidelines, category: guidelines}
+    - {tool: get_guideline, category: guidelines}
+    - {tool: get_guideline_page, category: guidelines}
+    - {tool: get_library_page_assets, category: guidelines}
+    - {tool: list_brand_color_palettes, category: brand-essentials}
+    - {tool: get_brand_color_palette, category: brand-essentials}
+    - {tool: get_brand_font_families, category: brand-essentials}
+graphql_only:
+  note: >-
+    Root fields in the visible schema with no MCP tool at all. The webhook trio is the
+    most consequential gap — an agent cannot subscribe Frontify to events through MCP.
+  fields:
+    - {field: RootQuery.webhooks, capability: list installed webhooks}
+    - {field: RootMutation.installProjectWebhook, capability: webhooks}
+    - {field: RootMutation.configureProjectWebhook, capability: webhooks}
+    - {field: RootMutation.uninstallWebhook, capability: webhooks}
+    - {field: RootMutation.createLicense, capability: licensing}
+    - {field: RootMutation.deleteLicense, capability: licensing}
+    - {field: RootMutation.addAssetLicense, capability: licensing}
+    - {field: RootMutation.removeAssetLicense, capability: licensing}
+    - {field: RootMutation.createAssetVariant, capability: asset variants}
+    - {field: RootMutation.replaceAssetVariant, capability: asset variants}
+    - {field: RootMutation.deleteAssetVariant, capability: asset variants}
+    - {field: RootMutation.createAttachment, capability: attachments}
+    - {field: RootMutation.deleteAttachment, capability: attachments}
+    - {field: RootMutation.addAssetRelations, capability: asset relations}
+    - {field: RootMutation.addAssetPreviewImage, capability: preview images}
+    - {field: RootMutation.removeAssetPreviewImage, capability: preview images}
+    - {field: RootMutation.deleteAsset, capability: destructive asset delete}
+    - {field: RootMutation.deleteCollection, capability: destructive collection delete}
+    - {field: RootMutation.deleteFolders, capability: destructive folder delete}
+    - {field: RootMutation.moveFolders, capability: folder moves}
+    - {field: RootMutation.updateFolder, capability: folder updates}
+    - {field: RootMutation.updateCollection, capability: collection updates}
+    - {field: RootMutation.removeAssetTags, capability: tag removal}
+    - {field: RootMutation.syncAssetTags, capability: tag sync}
+    - {field: RootMutation.removeCustomMetadata, capability: metadata removal}
+    - {field: RootMutation.updateCustomMetadataProperty, capability: metadata schema}
+    - {field: RootMutation.deleteCustomMetadataProperty, capability: metadata schema}
+    - {field: RootMutation.addCustomMetadataPropertyOptions, capability: metadata schema}
+    - {field: RootMutation.removeCustomMetadataPropertyOptions, capability: metadata schema}
+    - {field: RootMutation.setCollectionAssets, capability: collection membership}
+    - {field: RootMutation.removeCollectionAssets, capability: collection membership}
+    - {field: RootMutation.createExternalAsset, capability: external/linked assets}
+    - {field: RootMutation.inviteProjectUser, capability: user invitation}
+    - {field: RootMutation.editComment, capability: comment editing}
+    - {field: RootMutation.deleteComment, capability: comment deletion}
+    - {field: RootMutation.resolveAssetComment, capability: comment status}
+    - {field: RootMutation.reopenAssetComment, capability: comment status}
+    - {field: RootMutation.publishMarketplaceApp, capability: marketplace apps}
+    - {field: RootQuery.node, capability: Node global id resolution}
+coverage:
+  mcp_tools_total: 54
+  mcp_tools_bound_to_graphql: 36
+  mcp_tools_mcp_only: 1
+  mcp_tools_not_in_visible_schema: 17
+  graphql_root_fields_visible: 70
+  graphql_root_fields_with_a_tool: 25
+  graphql_root_fields_without_a_tool: 39
+  note: >-
+    Read as a divergence measurement, not a scorecard: the MCP server exposes a curated,
+    agent-safe projection of Frontify (17 of its tools reach capabilities the public
+    schema does not even show), while the GraphQL API exposes destructive and
+    administrative operations the MCP server deliberately withholds.

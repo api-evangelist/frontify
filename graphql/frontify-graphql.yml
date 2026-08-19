@@ -1,0 +1,76 @@
+generated: '2026-08-13'
+method: probed
+source: https://api.frontify.com/graphql
+description: >-
+  Frontify's public API is a single GraphQL API served per instance at
+  https://{instance}.frontify.com/graphql. GraphQL introspection is OPEN and
+  UNAUTHENTICATED on every Frontify host probed — an anonymous POST of the
+  standard IntrospectionQuery returns the full schema document, while every
+  data-bearing field returns a permission error ("UserId not set in identity.").
+  The SDL and the raw introspection response saved here are therefore the real,
+  provider-served machine-readable contract for this API — the equivalent of an
+  OpenAPI document for a REST provider. Frontify publishes no OpenAPI.
+endpoint_pattern: https://{instance}.frontify.com/graphql
+files:
+  - file: frontify.graphql
+    format: GraphQL SDL
+    note: >-
+      Printed from the live introspection response by the enrichment pipeline.
+      Field/type/enum descriptions and @deprecated directives are carried through
+      verbatim from the server; nothing was authored.
+  - file: frontify-introspection.json
+    format: GraphQL introspection JSON
+    note: The verbatim response body from the anonymous IntrospectionQuery.
+schema:
+  query_type: RootQuery
+  mutation_type: RootMutation
+  subscription_type: null
+  queries: 13
+  mutations: 57
+  types_total: 308
+  objects: 165
+  interfaces: 13
+  input_objects: 88
+  enums: 21
+  scalars: 12
+  unions: 1
+  deprecated_fields: 63
+  deprecated_fields_note: >-
+    Every @deprecated field carries an explicit removal date in its reason string
+    (e.g. "This field will be removed. Use `customMetadata` instead. | Date:
+    2026-07-01"), plus a named replacement in most cases. Removal dates observed
+    range 2023-01-01 to 2027-01-01. See lifecycle/frontify-lifecycle.yml.
+completeness_note: >-
+  Frontify's own generated reference at https://frontify.github.io/graphql-reference/
+  states the schema covers 18 queries, 102 mutations and 514 types. The anonymous
+  introspection captured here returns 13 queries, 57 mutations and 308 types, so the
+  schema is field-visibility-scoped: an anonymous caller sees a subset. This file is
+  the anonymously-visible slice, honestly labelled — not the complete schema. A fuller
+  capture requires an authenticated instance token.
+probes:
+  - url: https://api.frontify.com/graphql
+    method: POST
+    http_status: 200
+    result: introspection returned; 308 types
+  - url: https://developer.frontify.com/graphql
+    method: POST
+    http_status: 200
+    result: introspection returned (same schema)
+  - url: https://demo.frontify.com/graphql
+    method: POST
+    http_status: 200
+    result: introspection returned (same schema) — confirms per-instance endpoint pattern
+  - url: https://api.frontify.com/graphql
+    method: POST
+    http_status: 200
+    result: >-
+      data query `{ brands { id name } }` returns
+      errors[0].message "UserId not set in identity." with
+      extensions.category "permission" — schema is public, data is not
+ownership:
+  verified: true
+  note: >-
+    Every endpoint probed is on a frontify.com host controlled by Frontify, the
+    schema's own types are Frontify domain objects (Brand, Library, Guideline,
+    CreativeTemplate, Asset), and the response carries `server: frontify`.
+reference: https://frontify.github.io/graphql-reference/

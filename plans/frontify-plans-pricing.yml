@@ -1,0 +1,39 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.frontify.com/en/pricing/
+url: https://www.frontify.com/en/pricing/
+plan_count: 0
+pricing_model: contact-sales
+billing_unit: monthly-active-users
+description: >-
+  Frontify publishes a pricing PAGE but no prices and no tiers. The page states the
+  position outright: "By not displaying fixed pricing, we engage directly with customers
+  to assess their specific needs and propose a tailored package that offers the most
+  value." Every route is a demo request or a sales conversation.
+plans: []
+what_is_published:
+  - fact: Billing is based on Monthly Active Users (MAU).
+  - fact: >-
+      MAU is smoothed with a six-month average so usage spikes do not swing the bill.
+  - fact: >-
+      External agencies and freelancers count toward MAU if they log in during the month.
+  - fact: No published price, currency, tier name, seat count, storage quota or API quota.
+api_pricing:
+  metered: false
+  note: >-
+    There is no separate developer/API plan, no per-call price, and no free API tier.
+    API access is a property of the Frontify subscription, and Frontify's own knowledge
+    base notes it requires "a Frontify account with API access enabled" — i.e. API
+    availability is itself negotiated with sales rather than self-served.
+free_trial:
+  published: false
+  note: The pricing page routes to "request a demo" rather than a self-serve trial signup.
+probes:
+  - url: https://www.frontify.com/en/pricing/
+    http_status: 200
+    result: page renders; no tier or price is published on it
+    checked: '2026-08-13'
+note: >-
+  plan_count 0 is a measured finding, not a gap in this pass: Frontify deliberately
+  publishes no plans. Recorded so the absence is legible rather than looking like the
+  page was never read.

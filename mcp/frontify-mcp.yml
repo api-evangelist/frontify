@@ -1,9 +1,39 @@
-generated: '2026-07-19'
-method: searched
+generated: '2026-08-13'
+method: probed
 status: published
 source: >-
-  https://github.com/Frontify/mcp-servers (Official Frontify MCP Server
-  Resources) + https://mcp.frontify-integrations.com/
+  https://mcp.frontify-integrations.com/ (Frontify's own hosted MCP server, with a
+  human-readable tool page per pack) + https://github.com/Frontify/mcp-servers
+  (Official Frontify MCP Server Resources) + live probes of the endpoint and its
+  OAuth discovery documents
+description: >-
+  Frontify's hosted MCP server connects AI assistants (Claude, ChatGPT, Cursor) directly
+  to a Frontify digital asset management (DAM) system — discover brands, search and
+  retrieve assets, manage metadata, collaborate, and automate creative workflows through
+  natural language. Nothing to install or run; point an MCP client at a pack endpoint and
+  authorize. Frontify labels it Beta / experimental and warns explicitly that write
+  access carries real risk of irreversible change.
+deployment:
+  mode: remote
+  endpoint: https://mcp.frontify-integrations.com/mcp
+  auth: oauth
+  verified: probed
+  probe:
+    checked: '2026-08-13'
+    request: 'POST {"jsonrpc":"2.0","id":1,"method":"tools/list"} with Accept: application/json, text/event-stream'
+    http_status: 401
+    body: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Unauthorized: OAuth authentication required"},"id":null}'
+    www_authenticate: >-
+      Bearer resource_metadata="https://mcp.frontify-integrations.com/.well-known/oauth-protected-resource/mcp",
+      scope="mcp:tools"
+    result: >-
+      LIVE and correctly implementing the MCP 2025-11-25 authorization spec — the 401 is
+      a spec-conformant OAuth challenge, not a dead host. It supersedes the earlier
+      catalog census entry that recorded this endpoint as `probe: dead` and set
+      mode: none; that record was wrong.
+  note: >-
+    There is NO stdio/npx package — this is a remote-only server. An agent can reach it
+    today with an OAuth token; no local install exists.
 server:
   name: Frontify MCP Server
   hosted_by: Frontify
@@ -11,53 +41,314 @@ server:
   base_url: https://mcp.frontify-integrations.com/
   tool_reference: https://mcp.frontify-integrations.com/
   maturity: beta
-  auth: >-
-    OAuth per the MCP specification (2025-11-25 authorization). Supports both
-    Client ID Metadata Documents (CIMD) and Dynamic Client Registration (DCR);
-    users authorize access to their Frontify instance on first connection.
-description: >-
-  Frontify's hosted MCP server connects AI assistants (Claude, ChatGPT, Cursor)
-  directly to a Frontify digital asset management (DAM) system — discover brands,
-  search and retrieve assets, manage metadata, collaborate, and automate
-  creative workflows through natural language. Nothing to install or run; point
-  an MCP client at a pack endpoint and authorize.
+  spec_version: '2025-11-25'
+  auth:
+    type: oauth2
+    scope: mcp:tools
+    authorization_server: https://mcp.frontify-integrations.com
+    authorization_endpoint: https://mcp.frontify-integrations.com/oauth/authorize
+    token_endpoint: https://mcp.frontify-integrations.com/oauth/token
+    registration_endpoint: https://mcp.frontify-integrations.com/oauth/register
+    pkce: S256
+    client_registration: [client-id-metadata-document, dynamic-client-registration]
+    discovery:
+      - well-known/frontify-oauth-authorization-server.json
+      - well-known/frontify-oauth-protected-resource.json
+      - well-known/frontify-openid-configuration.json
+    downstream_scopes: scopes/frontify-scopes.yml
 capabilities:
-  - Brand & structure discovery (brands, libraries, projects)
-  - Navigation & search across brands/libraries/projects with type filtering
-  - Asset retrieval, upload & creation (from URL or file upload)
-  - Organizing assets (tags, targets, custom metadata, collections, folders)
-  - Comments & collaboration (read/add/reply to comments and annotations)
-  - Guidelines (brand portals, guideline pages, library page assets)
-  - Creative templates (list templates, export creatives with variables)
-  - Workflow automation (tasks, statuses, checklists)
+- Brand & structure discovery (brands, libraries, projects)
+- Navigation & search across brands/libraries/projects with type filtering
+- Asset retrieval, upload & creation (from URL or file upload)
+- Organizing assets (tags, targets, custom metadata, collections, folders)
+- Comments & collaboration (read/add/reply to comments and annotations)
+- Guidelines (brand portals, guideline pages, library page assets)
+- Creative templates (list templates, export creatives with variables)
+- Workflow automation (tasks, statuses, checklists)
+- Brand essentials (color palettes, font families)
 packs:
-  - name: admin
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/admin
-    description: Full access — all tools, no restrictions.
-  - name: discovery
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/discovery
-    description: Read-only exploration — no writes or mutations.
-  - name: collaboration
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/collaboration
-    description: Comments, replies, and workflow tasks.
-  - name: asset-organization
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/asset-organization
-    description: Tags, targets, metadata, collections, and folders.
-  - name: asset-creation
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/asset-creation
-    description: Upload, update, tag, and add metadata to assets.
-  - name: creative-automation
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/creative-automation
-    description: Template export and upload results.
-  - name: workflow-automation
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/workflow-automation
-    description: Full workflow lifecycle and comments.
-  - name: brand-admin
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/brand-admin
-    description: Projects, folders, collections, and asset moves.
-  - name: brand-portal
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/brand-portal
-    description: List guidelines, read pages, browse library page assets.
-  - name: bulk-operations
-    endpoint: https://mcp.frontify-integrations.com/mcp/packs/bulk-operations
-    description: Multi-asset move, update, metadata, and targets.
+- name: admin
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/admin
+  tools: 54
+  scopes: [basic:read, basic:write, account:read, blocks:read]
+  description: All available tools — full access, no restrictions.
+- name: discovery
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/discovery
+  tools: 24
+  scopes: [basic:read, blocks:read]
+  description: Read-only exploration — brands, libraries, projects, assets, guidelines, templates.
+- name: collaboration
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/collaboration
+  tools: 21
+  scopes: [basic:read, basic:write]
+  description: Conversational workflows — comments, replies, workflow tasks.
+- name: asset-organization
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/asset-organization
+  tools: 21
+  scopes: [basic:read, basic:write]
+  description: Asset structure & hygiene — tags, targets, metadata, collections, folders.
+- name: asset-creation
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/asset-creation
+  tools: 21
+  scopes: [basic:read, basic:write]
+  description: Create or import assets — upload, update, tag, metadata, targets.
+- name: creative-automation
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/creative-automation
+  tools: 19
+  scopes: [basic:read, basic:write]
+  description: Template-driven automation — list templates, export creatives, upload results.
+- name: workflow-automation
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/workflow-automation
+  tools: 20
+  scopes: [basic:read, basic:write]
+  description: Review pipelines — workflow statuses, tasks, comments.
+- name: brand-admin
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/brand-admin
+  tools: 18
+  scopes: [basic:read, basic:write]
+  description: Structural management — projects, folders, collections, metadata properties.
+- name: brand-portal
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/brand-portal
+  tools: 11
+  scopes: [basic:read, blocks:read]
+  description: Brand portal content — list guidelines, read pages, browse library assets.
+- name: bulk-operations
+  endpoint: https://mcp.frontify-integrations.com/mcp/packs/bulk-operations
+  tools: 15
+  scopes: [basic:read, basic:write]
+  description: Bulk operations — move assets, update, set metadata, remove targets.
+client_config:
+  cursor_or_claude_desktop: |
+    {
+      "mcpServers": {
+        "frontify": {
+          "url": "https://mcp.frontify-integrations.com/mcp/packs/discovery"
+        }
+      }
+    }
+  note: Frontify recommends starting with the read-only `discovery` pack.
+tools_note: >-
+  The 54 tools below are the `admin` pack (the full set), transcribed verbatim from
+  Frontify's own per-pack HTML tool pages — name, annotation (read-only / write /
+  destructive) and description. `packs:` lists the other packs each tool appears in.
+  INPUT SCHEMAS ARE NOT CAPTURED: tools/list is OAuth-gated (401), so the live
+  inputSchema for each tool requires an authenticated introspection. The nearest public
+  proxy for each tool's real input contract is its backing GraphQL field — see
+  mcp/frontify-tool-crosswalk.yml.
+tools:
+  - name: get_current_user
+    annotation: read-only
+    description: "Retrieve the currently authenticated Frontify user's profile information."
+    packs: []
+  - name: get_collaborators
+    annotation: read-only
+    description: "List users who have access to a specific library or project with their IDs, names, emails, and roles."
+    packs: [discovery, collaboration, workflow-automation, brand-admin]
+  - name: list_brands
+    annotation: read-only
+    description: "List all brands available in the Frontify account with their IDs, names, and visual identities."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, brand-portal, bulk-operations]
+  - name: get_brand
+    annotation: read-only
+    description: "Retrieve detailed information about a specific brand including its libraries and projects."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, brand-portal, bulk-operations]
+  - name: get_library
+    annotation: read-only
+    description: "Retrieve a library's structure including its folders, assets, collections, and custom metadata definitions."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, bulk-operations]
+  - name: get_project
+    annotation: read-only
+    description: "Retrieve a project's structure including its folders and assets."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, bulk-operations]
+  - name: create_project
+    annotation: write
+    description: "Create a new project within a Frontify brand for collaborative file management."
+    packs: [brand-admin]
+  - name: search_assets
+    annotation: read-only
+    description: "Search assets within a library, project, or brand; returns lightweight id/title matches (no widget)."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, bulk-operations]
+  - name: display_assets
+    annotation: read-only
+    description: "Display Frontify assets in a widget; the only path to download or open on Frontify."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, bulk-operations]
+  - name: get_assets_data
+    annotation: read-only
+    description: "Fetch Frontify asset metadata (no widget) with selectable property groups."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, bulk-operations]
+  - name: read_asset
+    annotation: read-only
+    description: "Fetch Frontify CDN images as inline content for visual analysis."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, brand-portal, bulk-operations]
+  - name: move_assets
+    annotation: destructive
+    description: "Move one or more assets to a different folder within the same Frontify library or workspace."
+    packs: [brand-admin, bulk-operations]
+  - name: update_asset
+    annotation: write
+    description: "Update the metadata of an existing Frontify asset such as title, description, or alternative text."
+    packs: [asset-creation, bulk-operations]
+  - name: add_asset_tags
+    annotation: write
+    description: "Add tags to a Frontify asset for improved organization and searchability."
+    packs: [asset-organization, asset-creation]
+  - name: upload_file
+    annotation: write
+    description: "Step 1 of 3: initiate a file upload to Frontify and receive presigned URLs to PUT the file content to."
+    packs: [asset-creation]
+  - name: create_asset
+    annotation: write
+    description: "Step 3 of 3: create the asset record in Frontify from a previously uploaded file."
+    packs: [asset-creation]
+  - name: create_asset_from_url
+    annotation: write
+    description: "Create an asset in Frontify from a public http/https URL — downloads the file, uploads it, and creates the asset automatically."
+    packs: [asset-creation, creative-automation]
+  - name: add_asset_revision
+    annotation: write
+    description: "Step 3 of 3: add a new revision to an existing asset from a previously uploaded file."
+    packs: [asset-creation]
+  - name: add_asset_revision_from_url
+    annotation: write
+    description: "Add a new revision to an existing asset from a public http/https URL — downloads the file, uploads it, and sets it as the current revision automatically."
+    packs: [asset-creation, creative-automation]
+  - name: get_asset_comments
+    annotation: read-only
+    description: "Retrieve comments and annotations on a specific Frontify asset with optional status filtering."
+    packs: [collaboration, workflow-automation]
+  - name: create_asset_comment
+    annotation: write
+    description: "Add a comment or visual annotation to a Frontify asset."
+    packs: [collaboration]
+  - name: reply_to_comment
+    annotation: write
+    description: "Post a threaded reply to an existing comment on a Frontify asset."
+    packs: [collaboration]
+  - name: get_collection_assets
+    annotation: read-only
+    description: "Retrieve lightweight id/title asset matches from a collection (no widget)."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, bulk-operations]
+  - name: get_folder_contents
+    annotation: read-only
+    description: "List subfolders and lightweight id/title asset matches within a folder (no widget)."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, bulk-operations]
+  - name: create_collection
+    annotation: write
+    description: "Create a new collection to curate a virtual grouping of assets in a library."
+    packs: [asset-organization, brand-admin]
+  - name: add_collection_assets
+    annotation: write
+    description: "Add one or more assets to an existing collection without moving the original files."
+    packs: [asset-organization, brand-admin]
+  - name: create_folder
+    annotation: write
+    description: "Create a new folder for organizing assets within a library, project, or parent folder."
+    packs: [asset-organization, brand-admin]
+  - name: set_custom_metadata
+    annotation: write
+    description: "Set custom metadata values on an asset or project."
+    packs: [asset-organization, asset-creation, bulk-operations]
+  - name: create_custom_metadata_property
+    annotation: write
+    description: "Create a new custom metadata property definition on a library or project."
+    packs: [brand-admin]
+  - name: list_guidelines
+    annotation: read-only
+    description: "List all available guidelines for a Frontify brand with their names, IDs, and URLs."
+    packs: [discovery, brand-portal]
+  - name: get_guideline
+    annotation: read-only
+    description: "Retrieve detailed information about a specific guideline including its page structure."
+    packs: [discovery, brand-portal]
+  - name: get_guideline_page
+    annotation: read-only
+    description: "Read the content of a guideline page including its sections, headings, and content blocks."
+    packs: [discovery, brand-portal]
+  - name: get_library_page_assets
+    annotation: read-only
+    description: "Retrieve lightweight id/title asset matches from a library page (no widget)."
+    packs: [discovery, brand-portal]
+  - name: list_creative_templates
+    annotation: read-only
+    description: "List available creative templates in a brand."
+    packs: [discovery, creative-automation]
+  - name: get_templates_data
+    annotation: read-only
+    description: "Fetch full creative template data (no widget), including variables and export options."
+    packs: [discovery, creative-automation]
+  - name: display_templates
+    annotation: read-only
+    description: "Display Frontify creative templates in a widget (detail for one, grid for many)."
+    packs: [discovery, creative-automation]
+  - name: export_creative
+    annotation: write
+    description: "Start an asynchronous export job to generate a design from a creative template with custom variable values."
+    packs: [creative-automation]
+  - name: get_creative_export
+    annotation: read-only
+    description: "Check the status of a creative export job and retrieve download URLs when finished."
+    packs: [creative-automation]
+  - name: cancel_creative_exports
+    annotation: write
+    description: "Cancel one or more ongoing creative export jobs that are still processing or rendering."
+    packs: [creative-automation]
+  - name: generate_url
+    annotation: read-only
+    description: "Generate a Frontify URL for navigating to a specific resource in the web application."
+    packs: [discovery, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin, brand-portal, bulk-operations]
+  - name: get_targets
+    annotation: read-only
+    description: "Retrieve available targets from the Frontify account for asset categorization."
+    packs: [discovery, asset-organization, asset-creation]
+  - name: add_asset_targets
+    annotation: write
+    description: "Add targets to one or more assets to categorize them for specific use cases or channels."
+    packs: [asset-organization, asset-creation]
+  - name: remove_asset_targets
+    annotation: write
+    description: "Remove specific targets from one or more assets without affecting other assigned targets."
+    packs: [asset-organization, bulk-operations]
+  - name: get_workflow_statuses
+    annotation: read-only
+    description: "Retrieves the available workflow statuses configured for a given library."
+    packs: [discovery, collaboration, asset-organization, workflow-automation]
+  - name: create_workflow_task
+    annotation: write
+    description: "Creates a workflow task on an asset and assigns it to the specified workflow status."
+    packs: [collaboration, workflow-automation]
+  - name: move_workflow_task
+    annotation: write
+    description: "Moves one or more workflow tasks to a different workflow status."
+    packs: [collaboration, asset-organization, workflow-automation]
+  - name: delete_workflow_task
+    annotation: write
+    description: "Permanently deletes a workflow task from an asset."
+    packs: [workflow-automation]
+  - name: add_workflow_checklist_item
+    annotation: write
+    description: "Adds a checklist item to an existing workflow task."
+    packs: [collaboration, workflow-automation]
+  - name: update_workflow_checklist_item
+    annotation: write
+    description: "Updates the content, assignee, or completion state of a workflow checklist item."
+    packs: [collaboration, workflow-automation]
+  - name: remove_workflow_checklist_item
+    annotation: destructive
+    description: "Removes a checklist item from a workflow task."
+    packs: [collaboration, workflow-automation]
+  - name: list_brand_color_palettes
+    annotation: read-only
+    description: "List a brand's color palette summaries from its essentials."
+    packs: [discovery, brand-portal]
+  - name: get_brand_color_palette
+    annotation: read-only
+    description: "Retrieve a single brand color palette with its paginated color list and per-color multi-format representations."
+    packs: [discovery, brand-portal]
+  - name: get_brand_font_families
+    annotation: read-only
+    description: "Retrieve a brand's font families and provider-specific font styles from its essentials."
+    packs: [discovery, brand-portal]
+  - name: get_account
+    annotation: read-only
+    description: "Retrieve the current Frontify account information including account ID."
+    packs: []

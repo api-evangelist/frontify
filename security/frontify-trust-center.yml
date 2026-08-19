@@ -1,24 +1,77 @@
-generated: '2026-07-19'
-method: searched
+generated: '2026-08-13'
+method: probed
 probe: true
 source: https://trust.frontify.com/
 url: https://trust.frontify.com/
+platform: Conveyor
+dataroom: https://app.conveyor.com/datarooms/d6f77cab-a507-48af-bfb9-771eddc3f398
+description: >-
+  Frontify runs its trust center on Conveyor. The page is JS-rendered, but the bootstrap
+  payload embeds Frontify's own canonical vendor record, which is where the certification
+  list below comes from — read out of the record whose "website" field is
+  http://www.frontify.com, not off the rendered page.
 certifications:
-- SOC 2
-- ISO 27001
-- ISO 27017
-- ISO 27018
-- HIPAA
-- FedRAMP
-- GDPR
-- CSA STAR
-evidence:
-- source: https://trust.frontify.com/
-  keywords:
-  - soc 2
-  - soc2
-  - hipaa
-  - fedramp
-  - trust center
+  - SOC 2 Type II
+  - ISO 27001:2022
+  - Cyber Essentials
+  - TISAX
+  - Swiss-US Data Privacy Framework
+  - GDPR
+  - PCI
+  - HIPAA
+certification_ids_verbatim:
+  - soc2-type-2
+  - iso-27001-2022
+  - cyber-essentials
+  - tisax
+  - swiss-us-dpf
   - gdpr
-  - csa star
+  - pci
+  - hipaa
+soc2:
+  status: first SOC 2 Type II examination completed
+  announced: '2026-07-07'
+  report_access: available on request through the Trust Center
+  quote: >-
+    "We're pleased to share that Frontify has successfully completed its first SOC 2
+    Type II examination... This milestone marks the beginning of our ongoing SOC 2
+    program. As part of our commitment to continuous improvement, future SOC 2 Type II
+    examinations will cover a longer observation period and an expanded scope."
+  note: >-
+    Worth reading precisely: this is Frontify's FIRST Type II, announced 2026-07-07, with
+    a deliberately narrow first observation period. It is a real attestation, not a
+    long-running program.
+security_qa:
+  published: true
+  note: >-
+    Frontify announced a Security Q&A section in the trust center covering frequently
+    asked security questions on policies, certifications and procedures.
+correction:
+  applied: '2026-08-13'
+  previous_claim: [SOC 2, ISO 27001, ISO 27017, ISO 27018, HIPAA, FedRAMP, GDPR, CSA STAR]
+  what_was_wrong: >-
+    The previous round credited Frontify with ISO 27017, ISO 27018, FedRAMP and CSA STAR.
+    NONE of those belong to Frontify. The trust.frontify.com bootstrap payload also
+    embeds OTHER vendors' Conveyor records — Datadog (iso-27017, iso-27018,
+    fedramp-li-saas), Splunk (fedramp-moderate, CSA STAR 2) and AWS (fedramp, csa) — and
+    a keyword scan of the page body cannot tell whose certification it just matched. The
+    earlier artifact matched on the page, not on Frontify's record.
+  what_was_missed: >-
+    The same error dropped four certifications Frontify genuinely holds — Cyber
+    Essentials, TISAX, Swiss-US DPF and PCI — and lost the ISO 27001 vintage (2022).
+  rule: >-
+    On a shared trust-center platform (Conveyor, SafeBase, Vanta, Drata), match the
+    vendor record by its own website/slug field before reading any certification list.
+    A keyword hit on the page is not evidence about this company.
+evidence:
+  - source: https://trust.frontify.com/
+    http_status: 200
+    kind: trust-center
+    matched_record: 'canonical_asset/vendor "Frontify", slug "frontify", website http://www.frontify.com'
+    checked: '2026-08-13'
+related:
+  security_page: https://www.frontify.com/en/security/
+  vulnerability_disclosure: security/frontify-vulnerability-disclosure.yml
+  legal:
+    - https://www.frontify.com/en/legal/data-processing-agreement
+    - https://www.frontify.com/en/legal/technical-and-organizational-measures

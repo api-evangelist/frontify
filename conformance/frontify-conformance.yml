@@ -1,43 +1,157 @@
-generated: '2026-07-19'
-method: searched
+generated: '2026-08-13'
+method: probed
 source: >-
-  https://trust.frontify.com/ (compliance program) + developer.frontify.com
-  (GraphQL API + OAuth) + github.com/Frontify/mcp-servers (MCP authorization)
+  live probes of the Frontify GraphQL and MCP surfaces on 2026-08-13 +
+  well-known/*.json fetched from mcp.frontify-integrations.com +
+  https://trust.frontify.com/ + https://www.frontify.com/en/security/
 standards:
   - id: graphql
     conforms: true
-    evidence: Frontify's public API is a GraphQL API (developer.frontify.com GraphQL API docs).
+    evidence: >-
+      Frontify's public API is GraphQL. Live introspection returns a full schema
+      (308 types, 13 queries, 57 mutations) — see graphql/frontify.graphql.
+  - id: graphql-introspection
+    conforms: true
+    evidence: Anonymous IntrospectionQuery returns HTTP 200 with the complete schema document.
+  - id: graphql-over-http
+    conforms: partial
+    evidence: >-
+      Execution errors follow the spec (HTTP 200, errors[] with message/locations/path,
+      partial data). Request-validation errors do NOT: they return HTTP 422 "Invalid
+      query" and syntax errors HTTP 400 "Bad request", both with no locations, path or
+      extensions. See errors/frontify-error-catalog.yml.
+  - id: graphql-cursor-connections
+    conforms: false
+    evidence: >-
+      No Relay connection spec — zero occurrences of pageInfo/edges/endCursor. Frontify
+      uses offset pagination (limit/page + total/hasNextPage/items wrappers).
   - id: oauth2
     conforms: true
     evidence: >-
-      OAuth 2.0 authorization-code flow against a Frontify instance (Frontify
-      Authenticator, Finder, and the hosted MCP server's OAuth authorization).
+      Authorization-code flow on both surfaces — the Frontify instance
+      (/api/oauth/authorize) and the MCP server's own authorization server.
+  - id: rfc8414-oauth-authorization-server-metadata
+    conforms: true
+    evidence: >-
+      https://mcp.frontify-integrations.com/.well-known/oauth-authorization-server
+      returns 200 with issuer, authorization_endpoint, token_endpoint,
+      registration_endpoint, scopes_supported, grant_types_supported and
+      code_challenge_methods_supported. Saved verbatim in well-known/.
+  - id: rfc9728-oauth-protected-resource-metadata
+    conforms: true
+    evidence: >-
+      https://mcp.frontify-integrations.com/.well-known/oauth-protected-resource returns
+      200 with resource, authorization_servers, scopes_supported and
+      bearer_methods_supported; the 401 on /mcp carries a matching
+      WWW-Authenticate resource_metadata pointer.
+  - id: rfc7591-dynamic-client-registration
+    conforms: true
+    evidence: registration_endpoint published and DCR named in Frontify's own MCP README.
+  - id: rfc7636-pkce
+    conforms: true
+    evidence: code_challenge_methods_supported ["S256"].
   - id: mcp
     conforms: true
     evidence: >-
-      Official hosted Frontify MCP Server implements the Model Context Protocol
-      (2025-11-25) authorization spec with CIMD and Dynamic Client Registration.
+      Official hosted MCP server implements the Model Context Protocol 2025-11-25
+      authorization spec (CIMD + DCR) and answers an anonymous tools/list with a
+      spec-conformant 401 OAuth challenge. 54 tools across 10 packs.
   - id: oidc
+    conforms: partial
+    evidence: >-
+      The MCP authorization server serves an OIDC-shaped /.well-known/openid-configuration
+      advertising the `openid` scope, but no Frontify-instance IdP discovery document is
+      served on any frontify.com host and no id_token/userinfo surface was verified.
+  - id: rfc9116-security-txt
     conforms: false
-    evidence: No /.well-known/openid-configuration served on the web/developer hosts.
+    evidence: >-
+      No /.well-known/security.txt on any Frontify host (404 on www, api and the MCP
+      host; SPA shell on developer). The disclosure program itself exists as a human
+      page — see security/frontify-vulnerability-disclosure.yml.
   - id: rfc9457-problem-details
     conforms: false
-    evidence: GraphQL API returns errors via the GraphQL top-level errors[] array, not application/problem+json.
-  - id: soc2
+    evidence: Errors are GraphQL errors[], not application/problem+json.
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: >-
+      No Sunset/Deprecation headers. Deprecation is signalled in-schema instead, with
+      explicit removal dates on all 63 @deprecated fields.
+  - id: a2a
+    conforms: false
+    evidence: >-
+      No A2A agent card served — /.well-known/agent-card.json and /.well-known/agent.json
+      404 on www.frontify.com and the MCP host, and return the SPA HTML shell (not a
+      card) on developer.frontify.com.
+  - id: asyncapi
+    conforms: false
+    evidence: >-
+      Frontify has a real 24-event webhook surface but publishes no AsyncAPI document.
+      See asyncapi/frontify-webhooks.yml.
+  - id: openapi
+    conforms: false
+    evidence: No OpenAPI is published; the machine-readable contract is GraphQL.
+  - id: agent-skills
     conforms: true
-    evidence: SOC 2 listed on trust.frontify.com.
+    evidence: >-
+      Frontify publishes a curated Agent Skills catalogue at github.com/Frontify/skills
+      conforming to the open Agent Skills spec (agentskills.io). See skills/_index.yml.
+  - id: soc2-type-2
+    conforms: true
+    evidence: >-
+      Frontify's own Conveyor vendor record lists soc2-type-2, and a 2026-07-07 trust-center
+      announcement states Frontify completed its FIRST SOC 2 Type II examination, with the
+      report available on request.
   - id: iso-27001
     conforms: true
-    evidence: ISO 27001 listed on trust.frontify.com.
+    evidence: iso-27001-2022 on Frontify's own trust-center vendor record (2022 revision).
   - id: iso-27017
-    conforms: true
-    evidence: ISO 27017 listed on trust.frontify.com.
+    conforms: false
+    evidence: >-
+      CORRECTED 2026-08-13. Previously recorded as conforming. ISO 27017 is NOT on
+      Frontify's record — the match came from Datadog's record, which the shared Conveyor
+      trust page also embeds. See security/frontify-trust-center.yml correction[].
   - id: iso-27018
+    conforms: false
+    evidence: CORRECTED 2026-08-13. Same misattribution as iso-27017 (Datadog's record).
+  - id: fedramp
+    conforms: false
+    evidence: >-
+      CORRECTED 2026-08-13. Never a Frontify certification; the page matches came from the
+      embedded Datadog, Splunk and AWS records.
+  - id: csa-star
+    conforms: false
+    evidence: CORRECTED 2026-08-13. Splunk's record, not Frontify's.
+  - id: cyber-essentials
     conforms: true
-    evidence: ISO 27018 listed on trust.frontify.com.
+    evidence: cyber-essentials on Frontify's own trust-center vendor record.
+  - id: tisax
+    conforms: true
+    evidence: tisax on Frontify's own trust-center vendor record.
+  - id: swiss-us-dpf
+    conforms: true
+    evidence: swiss-us-dpf (Swiss-US Data Privacy Framework) on Frontify's own trust-center vendor record.
+  - id: pci
+    conforms: true
+    evidence: pci on Frontify's own trust-center vendor record.
+  - id: hipaa
+    conforms: true
+    evidence: hipaa on Frontify's own trust-center vendor record.
   - id: gdpr
     conforms: true
-    evidence: GDPR listed on trust.frontify.com.
+    evidence: >-
+      gdpr on Frontify's own trust-center vendor record; DPA and Technical & Organizational
+      Measures published under frontify.com/en/legal/.
+  - id: owasp
+    conforms: claimed
+    evidence: >-
+      https://www.frontify.com/en/security/ states the development process follows OWASP
+      guidelines. A vendor claim, not an independently verified certification.
 compliance_program:
   url: https://trust.frontify.com/
-  certifications: [SOC 2, ISO 27001, ISO 27017, ISO 27018, GDPR]
+  certifications: [SOC 2 Type II, ISO 27001:2022, Cyber Essentials, TISAX, Swiss-US DPF, GDPR, PCI, HIPAA]
+  source: Frontify's own vendor record on its Conveyor-hosted trust center
+  correction_note: >-
+    The certification list on this file was corrected on 2026-08-13. See
+    security/frontify-trust-center.yml correction[] for what was wrong and why.
+  security_page: https://www.frontify.com/en/security/
+  vulnerability_disclosure: security/frontify-vulnerability-disclosure.yml

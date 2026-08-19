@@ -1,0 +1,1 @@
+{"resource":"https://mcp.frontify-integrations.com/mcp","authorization_servers":["https://mcp.frontify-integrations.com"],"scopes_supported":["mcp:tools"],"bearer_methods_supported":["header"],"resource_documentation":"https://github.com/frontify/frontify-mcp"}

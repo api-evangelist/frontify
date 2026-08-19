@@ -1,19 +1,98 @@
-generated: '2026-07-19'
-method: searched
+generated: '2026-08-13'
+method: probed
 source: >-
-  https://status.frontify.com/ + https://developer.frontify.com/changelog +
-  developer.frontify.com GraphQL API docs
+  graphql/frontify.graphql (live introspected schema — 63 @deprecated fields, every one
+  carrying an explicit removal date) + https://status.frontify.com/ +
+  https://developer.frontify.com/changelog
 versioning:
   scheme: graphql-schema-evolution
+  api_version_in_url: false
   note: >-
-    Additive GraphQL schema evolution with field-level deprecation
-    (@deprecated); no URL/path API version.
+    Additive GraphQL schema evolution with field-level deprecation. There is no URL or
+    header API version; the schema itself is the version, and the deprecation directives
+    are the migration contract.
 deprecation:
   policy_url: null
-  mechanism: graphql-field-deprecation
-  note: >-
-    Deprecation is signaled via GraphQL @deprecated field directives surfaced in
-    the schema and changelog. No separate written deprecation/sunset policy page
-    was verified in this pass, so no Deprecation pointer is wired.
+  policy_page_published: false
+  mechanism: graphql-field-deprecation-with-explicit-removal-date
+  evidence: >-
+    63 fields in the live schema carry @deprecated, and EVERY one of them states a
+    removal date in its reason string, in a consistent machine-parseable form:
+    "This field will be removed. Use `<replacement>` instead. | Date: YYYY-MM-DD".
+    Most also name the exact replacement field. This is a real, dated, in-contract
+    deprecation practice — stronger than most providers' prose policy pages — even
+    though Frontify publishes no separate written deprecation/sunset policy document.
+  sunset_header: false
+  sunset_header_note: RFC 8594 Sunset/Deprecation HTTP headers are not used (GraphQL is a single endpoint).
+  deprecated_field_count: 63
+  removal_dates:
+    '2023-01-01': 2
+    '2024-01-01': 6
+    '2024-07-01': 6
+    '2025-07-01': 6
+    '2026-07-01': 41
+    '2027-01-01': 2
+  overdue_note: >-
+    61 of the 63 fields are already past their own stated removal date as of 2026-08-13
+    and are still being served — including RootQuery.project and Brand.projects, dated
+    2023-01-01, and the entire 41-field metadata migration dated 2026-07-01. Only the two
+    CreativeTemplate fields dated 2027-01-01 are still in the future. Frontify announces
+    removal dates reliably and enforces them loosely: read a Frontify removal date as
+    "stop using by", not "will break on". Integrators are not being cut off, but the
+    dates have lost their signalling value and a written deprecation policy stating the
+    actual removal practice would be worth more than the dates alone.
+  major_migrations_in_flight:
+    - from: MetadataField / MetadataValue / metadataValues / metadataFields
+      to: CustomMetadataProperty / CustomMetadata / customMetadata / customMetadataProperties
+      date: '2026-07-01'
+      fields_affected: 41
+      note: The largest migration in the schema; targets the whole custom-metadata subsystem.
+    - from: RootQuery.project / Brand.projects
+      to: RootQuery.library, RootQuery.workspaceProject, Brand.libraries, Brand.workspaceProjects
+      date: '2023-01-01'
+      fields_affected: 2
+    - from: subFolders
+      to: folders
+      date: '2025-07-01'
+      fields_affected: 3
+    - from: assetCount
+      to: assets.total
+      date: '2024-07-01'
+      fields_affected: 6
+    - from: 'delete* mutation payloads returning the deleted object'
+      to: 'the returned `id`'
+      date: '2024-01-01'
+      fields_affected: 6
+deprecated_operations:
+  - graphql/frontify.graphql#RootQuery.project
+  - graphql/frontify.graphql#RootMutation.addAssetMetadataFieldValue
+  - graphql/frontify.graphql#RootMutation.createMetadataField
+  - graphql/frontify.graphql#RootMutation.deleteMetadataField
+  - graphql/frontify.graphql#RootMutation.removeMetadataValue
+deprecated_operations_note: >-
+  Root-level only. The remaining 58 deprecated fields are on object types; the full list
+  is machine-readable in graphql/frontify-introspection.json (isDeprecated: true).
+sla:
+  url: null
+  uptime_target: null
+  note: No public SLA or uptime commitment was found; Frontify sells enterprise contracts (see plans/).
 status_page: https://status.frontify.com/
 changelog: https://developer.frontify.com/changelog
+support: https://help.frontify.com/
+beta_surfaces:
+  - surface: MCP Server
+    status: beta / experimental
+    note: >-
+      Frontify labels the hosted MCP server experimental and states it comes "without
+      support or reliability guarantees". See mcp/frontify-mcp.yml.
+  - surface: Brand SDK
+    status: beta
+    note: Labelled Beta in Frontify's own developer-tools overview.
+probes:
+  - url: https://status.frontify.com/
+    http_status: 200
+    checked: '2026-08-13'
+  - url: https://api.frontify.com/graphql
+    http_status: 200
+    result: introspection returned 63 @deprecated fields, all dated
+    checked: '2026-08-13'

@@ -1,0 +1,106 @@
+generated: '2026-08-13'
+method: searched
+source: >-
+  https://mcp.frontify-integrations.com/mcp/packs/admin (Frontify's own MCP pack pages
+  publish the exact Frontify OAuth scopes each pack requests) +
+  well-known/frontify-oauth-authorization-server.json +
+  well-known/frontify-oauth-protected-resource.json +
+  third-party integration docs that enumerate required Frontify scopes
+  (docs.elastic.io/components/frontify, docs.squiz.net Frontify connector)
+docs: https://developer.frontify.com/d/wJcTnsuhwb6T/about-1
+description: >-
+  Frontify runs two distinct OAuth surfaces with two distinct scope vocabularies, and
+  they must not be conflated:
+  (1) FRONTIFY INSTANCE OAuth — the authorization-code flow against
+  https://{instance}.frontify.com/api/oauth/authorize, used by the Frontify
+  Authenticator, Finder, Brand SDK apps and any custom integration. Its scopes are the
+  `basic:*` / `account:*` / `blocks:*` / `webhooks:*` family below.
+  (2) MCP SERVER OAuth — the authorization server embedded in the hosted MCP server at
+  mcp.frontify-integrations.com, whose own RFC 8414 metadata declares a single scope,
+  `mcp:tools`. That token is what an MCP client obtains; the server then brokers to the
+  instance under the pack's Frontify scopes.
+schemes:
+  - name: Frontify instance OAuth 2.0
+    type: oauth2
+    flow: authorizationCode
+    authorizationUrl: https://{instance}.frontify.com/api/oauth/authorize
+    note: >-
+      Instance-scoped. Client ID / Client Secret are issued by creating an OAuth
+      application in the Frontify instance's Developer settings. The exact scope set
+      requested at app-creation time must match the set used at authorization time.
+  - name: Frontify MCP Server authorization server
+    type: oauth2
+    flow: authorizationCode
+    authorizationUrl: https://mcp.frontify-integrations.com/oauth/authorize
+    tokenUrl: https://mcp.frontify-integrations.com/oauth/token
+    registrationUrl: https://mcp.frontify-integrations.com/oauth/register
+    pkce: S256
+    dynamic_client_registration: true
+    client_id_metadata_document_supported: true
+    source: well-known/frontify-oauth-authorization-server.json
+scopes:
+  - scope: basic:read
+    surface: frontify-instance
+    description: >-
+      Read access to core Frontify objects — brands, libraries, projects, folders,
+      assets and their metadata. Always active; the minimum scope for any integration.
+    evidence: requested by every MCP pack; documented as always-active / minimum by integration vendors
+  - scope: basic:write
+    surface: frontify-instance
+    description: >-
+      Write access to core Frontify objects — create/update assets, tags, custom
+      metadata, collections, folders, comments and workflow tasks.
+    evidence: requested by the admin, collaboration, asset-organization, asset-creation, creative-automation, workflow-automation, brand-admin and bulk-operations MCP packs
+  - scope: account:read
+    surface: frontify-instance
+    description: Read access to account-level information (account id, account settings, users).
+    evidence: requested by the admin MCP pack
+  - scope: blocks:read
+    surface: frontify-instance
+    description: >-
+      Read access to guideline content blocks — brand portals, guideline pages and the
+      blocks/sections inside them.
+    evidence: requested by the admin, discovery and brand-portal MCP packs
+  - scope: webhooks:read
+    surface: frontify-instance
+    description: Read access to installed webhooks.
+    evidence: named as a required scope for Frontify webhook operations in third-party connector documentation
+    confidence: medium
+  - scope: webhooks:write
+    surface: frontify-instance
+    description: Install, configure and uninstall webhooks.
+    evidence: named as a required scope for Frontify webhook operations in third-party connector documentation
+    confidence: medium
+  - scope: mcp:tools
+    surface: frontify-mcp-server
+    description: >-
+      The single scope advertised by the hosted MCP server's authorization server and
+      required on the bearer token an MCP client presents to
+      https://mcp.frontify-integrations.com/mcp.
+    evidence: >-
+      well-known/frontify-oauth-authorization-server.json scopes_supported;
+      well-known/frontify-oauth-protected-resource.json scopes_supported; and the
+      WWW-Authenticate challenge on an anonymous tools/list POST
+      (`Bearer resource_metadata="...", scope="mcp:tools"`)
+  - scope: openid
+    surface: frontify-mcp-server
+    description: Advertised in the MCP authorization server's OIDC-shaped discovery document only.
+    evidence: well-known/frontify-openid-configuration.json scopes_supported
+scope_to_pack:
+  admin: [basic:read, basic:write, account:read, blocks:read]
+  discovery: [basic:read, blocks:read]
+  collaboration: [basic:read, basic:write]
+  asset-organization: [basic:read, basic:write]
+  asset-creation: [basic:read, basic:write]
+  creative-automation: [basic:read, basic:write]
+  workflow-automation: [basic:read, basic:write]
+  brand-admin: [basic:read, basic:write]
+  brand-portal: [basic:read, blocks:read]
+  bulk-operations: [basic:read, basic:write]
+gaps:
+  - >-
+    Frontify does not publish a single canonical scopes reference page on a readable
+    host — the developer portal is a JS-rendered SPA. The vocabulary above is assembled
+    from Frontify's own MCP pack pages (which print the scopes verbatim), Frontify's own
+    OAuth AS metadata, and third-party connector docs. Scope strings marked
+    confidence: medium were not observed on a Frontify-served surface.

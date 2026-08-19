@@ -1,45 +1,106 @@
-generated: '2026-07-19'
-method: searched
-source: https://developer.frontify.com/d/XFPcrX4jz6V8/graphql-api
+generated: '2026-08-13'
+method: probed
+source: >-
+  graphql/frontify.graphql (live introspected schema) + live probes of
+  https://api.frontify.com/graphql on 2026-08-13 +
+  https://developer.frontify.com/d/wJcTnsuhwb6T/about-1
 description: >-
-  Cross-cutting request/response semantics for the Frontify public API. Frontify
-  exposes a single GraphQL API per instance rather than a REST surface, so many
-  REST conventions (path versioning, per-resource error envelopes) do not apply.
+  Cross-cutting request/response semantics for the Frontify public API. Frontify exposes
+  a single GraphQL API per instance rather than a REST surface, so many REST conventions
+  (path versioning, per-resource error envelopes, method semantics) do not apply. This
+  round replaces the previous docs-only reading with facts read directly off the live
+  schema and live responses.
 api_style: graphql
 endpoint: https://{instance}.frontify.com/graphql
+transport:
+  method: POST only
+  get_behavior: >-
+    GET returns HTTP 404 with a non-GraphQL body {"success":false,"error":"Not found"}.
+  content_type: application/json
 authentication:
   styles: [oauth2-authorization-code, api-token-bearer]
   ref: authentication/frontify-authentication.yml
+  scopes: scopes/frontify-scopes.yml
 pagination:
-  style: cursor
-  note: >-
-    GraphQL list fields follow the Relay-style connection pattern
-    (edges/node/pageInfo with cursor + hasNextPage); page size via first/after
-    arguments. Confirmed as GraphQL connection semantics from the API docs.
+  style: offset
+  params: [limit, page]
+  defaults: {limit: 25, page: 1}
+  response_fields: [total, page, limit, hasNextPage, items]
+  wrapper_convention: '<Type>Items (AssetItems, CollectionItems, FolderItems, LibraryItems, …)'
+  correction: >-
+    CORRECTS THE PREVIOUS ROUND. This artifact previously recorded cursor / Relay-style
+    connection pagination (edges/node/pageInfo). That is wrong: the live schema contains
+    ZERO occurrences of pageInfo, edges or endCursor. Frontify uses classic offset
+    pagination with `limit` and `page` arguments and a `*Items` wrapper carrying total /
+    page / limit / hasNextPage / items. Verified by grep against
+    graphql/frontify.graphql.
+  cursor_exception:
+    field: Library.assetsByExternalId(externalId, limit, cursor)
+    note: >-
+      The single cursor-paginated field in the schema — the external-id lookup used for
+      syncing with outside systems. Everything else is limit/page.
+  agent_note: >-
+    Deep paging with page numbers is not stable across concurrent writes. There is no
+    published stable-sort guarantee.
+filtering_and_sorting:
+  input_objects: [AssetQueryInput, AssetCommentQueryInput, CreativeTemplateQueryInput]
+  sort_enum: AssetQueryFilterSortType (RELEVANCE | NEWEST | OLDEST | TITLE_ASCENDING | TITLE_DESCENDING)
+  comment_status_filter: AssetCommentStatusFilter (OPEN | RESOLVED | ALL)
 idempotency:
   supported: false
   note: >-
-    Frontify's API is GraphQL; it does not document an Idempotency-Key header.
-    Mutation idempotency is the caller's responsibility. No Idempotency pointer
-    is wired.
+    Frontify documents no Idempotency-Key header and the schema carries no idempotency
+    key/token argument on any mutation. Mutation idempotency is the caller's
+    responsibility. No Idempotency pointer is wired — this is a genuine absence, not an
+    unrecorded feature.
+  agent_impact: >-
+    Retrying a failed createAsset / createFolder / createCollection can duplicate. The
+    only dedupe handle available is Asset.externalId plus
+    Library.assetsByExternalId as a read-before-write check.
 error_envelope:
   style: graphql-errors
+  ref: errors/frontify-error-catalog.yml
+  summary: >-
+    Execution-phase errors return HTTP 200 with a full GraphQL error object
+    (message, locations, path, extensions.category) and partial data. Validation errors
+    return HTTP 422 and syntax errors HTTP 400, both collapsed to a bare "Invalid query"
+    / "Bad request" with no locations, path or extensions — a real deviation from the
+    GraphQL over HTTP convention and the thing most likely to strand an agent.
+rate_limiting:
+  signal: extensions.complexityScore on every response
+  published_limits: none
+  headers: none
+  ref: rate-limits/frontify-rate-limits.yml
+request_tracing:
+  request_id_header: none observed
+  build_header: 'x-frontify-version (e.g. app-server-2026-08-13T08-17-13Z-16da142d) — a build id, not a correlation id'
   note: >-
-    Errors are returned in the GraphQL top-level `errors[]` array (message +
-    extensions), alongside partial `data`, per the GraphQL spec — not RFC 9457
-    problem+json.
+    No correlation/request-id header is returned, so a caller cannot quote an id to
+    support when reporting a failed call.
 versioning:
   scheme: graphql-schema-evolution
+  api_version_in_url: false
+  mechanism: additive schema evolution plus @deprecated fields carrying explicit removal dates
+  ref: lifecycle/frontify-lifecycle.yml
+  webhook_payload_versioning: 'ConfigureProjectWebhookInput.version — Int, 1 or 2'
+permissions_model:
+  in_schema: true
+  fields: [Asset.currentUserPermissions, Library.currentUserPermissions, Workspace.currentUserPermissions, AssetComment.currentUserPermissions]
   note: >-
-    Versioning is handled through additive GraphQL schema evolution and
-    deprecation of fields (@deprecated), not URL/path versions. See
-    changelog/frontify-changelog.yml and lifecycle/frontify-lifecycle.yml.
-rate_limiting:
+    A notable strength: the schema lets a caller ask what the current identity may do
+    with an object BEFORE attempting a mutation — a capability check most APIs at this
+    level do not expose. Useful for agents planning writes.
+introspection:
+  open: true
   note: >-
-    Frontify applies rate limiting to the GraphQL API; specific limits are
-    documented in the developer portal (SPA-rendered) and were not captured
-    verbatim in this pass.
+    Schema introspection is anonymous and unauthenticated on every Frontify host; only
+    data resolution requires identity. See graphql/frontify-graphql.yml.
 cross_links:
+  - graphql/frontify-graphql.yml
   - authentication/frontify-authentication.yml
+  - scopes/frontify-scopes.yml
+  - errors/frontify-error-catalog.yml
+  - rate-limits/frontify-rate-limits.yml
   - lifecycle/frontify-lifecycle.yml
+  - asyncapi/frontify-webhooks.yml
   - changelog/frontify-changelog.yml

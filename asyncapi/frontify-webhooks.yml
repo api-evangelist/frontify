@@ -1,0 +1,104 @@
+generated: '2026-08-13'
+method: derived
+source: >-
+  graphql/frontify.graphql (the live Frontify GraphQL schema — AssetWebhookEvent enum,
+  Webhook interface, ProjectWebhook type, InstallProjectWebhookInput /
+  ConfigureProjectWebhookInput, and the install/configure/uninstall mutations)
+docs: https://developer.frontify.com/d/wJcTnsuhwb6T/webhooks#/introduction/frontify-webhooks
+spec_type: none
+asyncapi_published: false
+description: >-
+  Frontify has a real, first-class event surface: project-scoped webhooks with a
+  24-value event vocabulary, a per-webhook shared secret for signature verification, and
+  two payload versions. Frontify publishes NO AsyncAPI document — this catalogue is
+  derived field-for-field from the live GraphQL schema, which is where the event
+  vocabulary is actually declared. Nothing here was authored; every event name is an
+  enum value in graphql/frontify.graphql.
+webhook_model:
+  scope: project
+  note: >-
+    Webhooks are installed on a Frontify project. Each webhook has an id, name,
+    notificationUrl, creator, createdAt and a randomly generated `secret`.
+  delivery: HTTP POST to the subscriber-supplied notificationUrl
+  payload_versions: [1, 2]
+  payload_version_note: >-
+    ConfigureProjectWebhookInput.version is a required Int documented in the schema as
+    "Webhook payload version (1 or 2)" — an explicit, in-contract payload versioning
+    mechanism.
+  subscription: >-
+    ConfigureProjectWebhookInput.subscribeTo is [AssetWebhookEvent!]. The schema states:
+    "Subscribe to specific webhook events. If not defined the webhook will subscribe to
+    all events" — i.e. subscribe-to-everything is the default.
+  signature:
+    present: true
+    field: secret
+    schema_description: The randomly generated secret of the current `Webhook`.
+    note: >-
+      Frontify signs deliveries; a receiver must verify the signature against the
+      webhook secret. Third-party connector documentation notes that replaying a sample
+      will not validate because only events genuinely sent by Frontify carry a valid
+      event signature. The exact header name and signing algorithm are documented on the
+      JS-rendered webhooks page and were NOT captured verbatim in this pass.
+management_api:
+  list: RootQuery.webhooks(limit, page) -> WebhookItems
+  install: RootMutation.installProjectWebhook(InstallProjectWebhookInput) -> InstallProjectWebhook
+  configure: RootMutation.configureProjectWebhook(ConfigureProjectWebhookInput) -> ConfigureProjectWebhook
+  uninstall: RootMutation.uninstallWebhook(UninstallWebhookInput) -> UninstallWebhook
+  scopes: [webhooks:read, webhooks:write, basic:write]
+  scopes_confidence: medium
+  scopes_note: >-
+    The webhook scope names come from third-party connector documentation, not from a
+    Frontify-served page. See scopes/frontify-scopes.yml.
+  mcp_gap: >-
+    None of the four webhook operations is exposed as an MCP tool — an agent connected
+    through the Frontify MCP server cannot subscribe Frontify to events. See
+    mcp/frontify-tool-crosswalk.yml graphql_only[].
+events:
+  vocabulary: AssetWebhookEvent
+  count: 24
+  note: >-
+    Names verbatim from the enum, including Frontify's British spelling of LICENCE. No
+    per-value descriptions are published in the schema, so none are invented here.
+  asset_lifecycle:
+    - ASSET_CREATED
+    - ASSET_UPDATED
+    - ASSET_DELETED
+    - ASSET_MOVED
+    - ASSET_PROCESSED
+    - ASSET_REVISION_ADDED
+  asset_variants:
+    - ASSET_VARIANT_ADDED
+    - ASSET_VARIANT_UPDATED
+    - ASSET_VARIANT_REMOVED
+  asset_attachments:
+    - ASSET_ATTACHMENT_ADDED
+    - ASSET_ATTACHMENT_REMOVED
+  asset_relations:
+    - ASSET_RELATION_ADDED
+    - ASSET_RELATION_REMOVED
+  asset_organization:
+    - ASSET_COLLECTION_ADDED
+    - ASSET_COLLECTION_REMOVED
+    - ASSET_TAG_ADDED
+    - ASSET_TAG_REMOVED
+    - ASSET_TARGET_CHANGED
+    - ASSET_CUSTOM_METADATA_UPDATED
+  asset_licensing:
+    - ASSET_LICENCE_ADDED
+    - ASSET_LICENCE_REMOVED
+  workflow:
+    - WORKFLOW_TASK_ASSIGNED
+    - WORKFLOW_TASK_MOVED
+    - WORKFLOW_TASK_DELETED
+gaps:
+  - No AsyncAPI (or CloudEvents) document is published for this event surface.
+  - >-
+    No public payload schema per event — the payload shape for each AssetWebhookEvent is
+    not in the GraphQL schema and the webhooks docs page is JS-rendered, so payloads were
+    not captured. This is the single highest-value thing Frontify could publish for
+    event consumers.
+  - No documented retry/backoff policy or delivery-log surface was found.
+cross_links:
+  - graphql/frontify-graphql.yml
+  - mcp/frontify-tool-crosswalk.yml
+  - scopes/frontify-scopes.yml

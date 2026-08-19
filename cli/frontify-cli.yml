@@ -1,8 +1,9 @@
-generated: '2026-07-19'
+generated: '2026-08-13'
 method: searched
 source: >-
   https://github.com/Frontify/brand-sdk (Frontify CLI) +
-  npm @frontify/frontify-cli v6.2.5 +
+  npm @frontify/frontify-cli v6.2.6 (published 2026-07-22, re-read from
+  registry.npmjs.org on 2026-08-13) +
   https://developer.frontify.com/d/xJoA5nhTq1AT/brand-sdk
 name: Frontify CLI
 binary: frontify-cli

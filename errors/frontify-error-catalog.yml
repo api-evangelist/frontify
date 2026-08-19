@@ -1,0 +1,79 @@
+generated: '2026-08-13'
+method: probed
+source: >-
+  live unauthenticated POSTs to https://api.frontify.com/graphql on 2026-08-13, each
+  crafted to trigger one error class; responses recorded verbatim
+format: graphql-errors
+rfc9457: false
+description: >-
+  Frontify's API is GraphQL, so errors arrive in the top-level `errors[]` array rather
+  than as RFC 9457 problem+json. This catalogue is PROBED, not guessed: each entry below
+  is a real response body observed from the live endpoint. The notable finding is that
+  Frontify does NOT return the standard GraphQL error detail for validation and syntax
+  failures — it collapses them to a bare "Invalid query" / "Bad request" on a non-200
+  HTTP status, with no `locations`, no `path` and no extensions. Execution-phase errors
+  (permission) DO carry full GraphQL detail.
+envelope:
+  errors: array of {message, locations?, path?, extensions?}
+  extensions_error_field: category
+  data: present and partially null on execution errors; null on request-rejection errors
+  response_extensions: >-
+    Every successful or execution-phase response carries a top-level
+    `extensions.complexityScore` integer — Frontify's query-cost signal. See
+    rate-limits/frontify-rate-limits.yml.
+problems:
+  - class: permission
+    http_status: 200
+    category: permission
+    message_examples:
+      - UserId not set in identity.
+      - "policy 'authenticated' not fulfilled"
+    detail: full GraphQL error object — message, locations, path, extensions.category
+    data: partial (the unauthorized field resolves to null, siblings still resolve)
+    trigger_probed: 'POST { brands { id } } with no Authorization header'
+    remediation: >-
+      Present a Frontify instance bearer token or an OAuth access token with at least
+      basic:read. See authentication/frontify-authentication.yml.
+  - class: query-validation
+    http_status: 422
+    category: null
+    message_examples:
+      - Invalid query
+    detail: >-
+      NONE — no locations, no path, no extensions, no indication of which field or
+      argument was invalid. This is a deliberate deviation from the GraphQL over HTTP
+      convention of returning a validation error per offending selection.
+    data: null
+    trigger_probed: 'POST { nonExistentField } and POST { asset { id } } (missing required arg)'
+    remediation: >-
+      Validate the document against graphql/frontify.graphql before sending. The server
+      will not tell you what was wrong.
+    agent_impact: >-
+      An agent cannot self-correct from this response. Ship the schema to the agent.
+  - class: syntax
+    http_status: 400
+    category: null
+    message_examples:
+      - Bad request
+    detail: NONE — same collapse as query-validation, at a different HTTP status.
+    data: null
+    trigger_probed: 'POST { brands { (unterminated selection set)'
+    remediation: Parse-check the query client-side.
+  - class: transport
+    http_status: 404
+    body: '{"success":false,"error":"Not found"}'
+    detail: >-
+      A GET to the GraphQL endpoint returns a non-GraphQL JSON error envelope
+      ({success,error}) rather than a GraphQL errors[] array. The endpoint is POST-only.
+    trigger_probed: 'GET https://api.frontify.com/graphql'
+observed_categories:
+  - permission
+note: >-
+  Only the `permission` category was observable anonymously. Other categories almost
+  certainly exist behind authentication (not-found, validation, rate-limit) but were NOT
+  observed, so they are not listed. Frontify publishes no error-code reference on a
+  machine-readable host.
+cross_links:
+  - graphql/frontify-graphql.yml
+  - conventions/frontify-conventions.yml
+  - rate-limits/frontify-rate-limits.yml

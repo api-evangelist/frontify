@@ -1,12 +1,98 @@
-generated: '2026-07-19'
+generated: '2026-08-13'
 method: searched
-source: https://developer.frontify.com/changelog
+source: >-
+  https://help.frontify.com/feed.xml (a real, dated RSS feed of Frontify product and
+  documentation updates) + https://developer.frontify.com/changelog (the developer
+  changelog page, which is JS-rendered and yielded no verbatim entries)
 url: https://developer.frontify.com/changelog
+feed: https://help.frontify.com/feed.xml
 scheme: dated-changelog
 description: >-
-  Frontify publishes a dated developer changelog for the GraphQL API and
-  developer platform at developer.frontify.com/changelog. The page is
-  SPA-rendered; the live URL is the source of truth. No individual dated entries
-  were captured verbatim in this pass (no fabrication) — the pointer records the
-  changelog surface's presence and location.
-entries: []
+  Frontify publishes a dated developer changelog at developer.frontify.com/changelog, but
+  that page is a JS-rendered SPA and serves no readable content to a machine — no entry
+  could be captured from it in this pass or the last. What IS machine-readable is
+  help.frontify.com/feed.xml, a 25-item RSS feed of dated product and documentation
+  updates, and that is where the entries below come from. Titles, dates and URLs are
+  verbatim from the feed; nothing was summarised into existence.
+api_changelog:
+  readable: false
+  url: https://developer.frontify.com/changelog
+  note: >-
+    The API-specific changelog remains uncaptured. The best machine-readable proxy for
+    API change is the schema itself: graphql/frontify.graphql carries 63 @deprecated
+    fields, each with an explicit removal date, which is a stronger change signal than
+    most changelogs. See lifecycle/frontify-lifecycle.yml.
+entries:
+  - date: '2026-08-13'
+    title: Enhanced image search
+    url: https://help.frontify.com/en/articles/12675788-enhanced-image-search
+    kind: product
+  - date: '2026-08-12'
+    title: Explore AI capabilities with Agentic hub
+    url: https://help.frontify.com/en/articles/16350206-explore-ai-capabilities-with-agentic-hub
+    kind: product
+    note: Agent-facing surface; relevant to mcp/ and skills/.
+  - date: '2026-08-07'
+    title: SSO - Okta Configuration Example
+    url: https://help.frontify.com/en/articles/677441-sso-okta-configuration-example
+    kind: docs
+  - date: '2026-08-06'
+    title: Views
+    url: https://help.frontify.com/en/articles/15956965-views
+    kind: product
+  - date: '2026-08-06'
+    title: Natural language search
+    url: https://help.frontify.com/en/articles/12276844-natural-language-search
+    kind: product
+  - date: '2026-08-06'
+    title: SSO User Groups mapping
+    url: https://help.frontify.com/en/articles/2425856-sso-user-groups-mapping
+    kind: docs
+  - date: '2026-08-06'
+    title: SSO - Microsoft Entra (Azure AD) Configuration Example
+    url: https://help.frontify.com/en/articles/5251569-sso-microsoft-entra-azure-ad-configuration-example
+    kind: docs
+  - date: '2026-08-03'
+    title: Create connected color palettes with the new Colors block
+    url: https://help.frontify.com/en/articles/16188816-create-connected-color-palettes-with-the-new-colors-block
+    kind: product
+  - date: '2026-08-01'
+    title: Available languages in Frontify
+    url: https://help.frontify.com/en/articles/16123748-available-languages-in-frontify
+    kind: docs
+  - date: '2026-07-31'
+    title: Catalogs
+    url: https://help.frontify.com/en/articles/15805867-catalogs
+    kind: product
+  - date: '2026-07-30'
+    title: Uploading Assets to Frontify
+    url: https://help.frontify.com/en/articles/5810426-uploading-assets-to-frontify
+    kind: docs
+  - date: '2026-07-30'
+    title: Frontify MCP (beta)
+    url: https://help.frontify.com/en/articles/14787214-frontify-mcp-beta
+    kind: product
+    note: The hosted MCP server's public announcement. See mcp/frontify-mcp.yml.
+  - date: '2026-07-30'
+    title: How to control which assets are shown to Viewers on frontend guideline
+    url: https://help.frontify.com/en/articles/9407162-how-to-control-which-assets-are-shown-to-viewers-on-frontend-guideline
+    kind: docs
+  - date: '2026-07-30'
+    title: How your existing settings became a view
+    url: https://help.frontify.com/en/articles/15957035-how-your-existing-settings-became-a-view
+    kind: product
+  - date: '2026-07-29'
+    title: Prepare InDesign Documents for Templates
+    url: https://help.frontify.com/en/articles/3768754-prepare-indesign-documents-for-templates
+    kind: docs
+window:
+  from: '2026-07-29'
+  to: '2026-08-13'
+  feed_items_available: 25
+  note: Recent window only; the live feed is the source of truth.
+breaking_changes:
+  published: false
+  note: >-
+    The feed does not distinguish breaking from additive changes, and Frontify publishes
+    no separate breaking-change log. Breaking change for API consumers is signalled
+    in-schema via @deprecated with a removal date.

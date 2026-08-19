@@ -1,10 +1,19 @@
-generated: '2026-07-19'
+generated: '2026-08-13'
 method: searched
 source: >-
-  npm registry search + the official Frontify GitHub organization
-  (github.com/Frontify). Only packages published under the @frontify npm scope
-  (publisher frontify-dev / Frontify GitHub Actions) or from a Frontify-owned
-  repository are marked official: true.
+  registry.npmjs.org metadata endpoint (queried per package for dist-tags.latest and its
+  publish date on 2026-08-13) + the official Frontify GitHub organization
+  (github.com/Frontify). Only packages published under the @frontify npm scope or from a
+  Frontify-owned repository are marked official: true.
+registries_checked:
+  npm: hit — 12 first-party packages
+  pypi: none
+  rubygems: none
+  packagist: none
+  maven-central: none
+  nuget: none
+  crates-io: none
+  pkg-go-dev: none
 packages:
   - language: javascript
     registry: npm
@@ -12,6 +21,7 @@ packages:
     url: https://www.npmjs.com/package/@frontify/frontify-finder
     install: npm install @frontify/frontify-finder
     version: 3.0.1
+    published: '2025-06-23'
     description: Authenticate, search and access Frontify assets data from any secure web app.
     repo: https://github.com/Frontify/frontify-finder
     official: true
@@ -21,6 +31,7 @@ packages:
     url: https://www.npmjs.com/package/@frontify/frontify-authenticator
     install: npm install @frontify/frontify-authenticator
     version: 2.0.1
+    published: '2026-04-08'
     description: Authenticate to your Frontify instance from within any secure web app.
     repo: https://github.com/Frontify/frontify-authenticator
     official: true
@@ -30,6 +41,7 @@ packages:
     url: https://www.npmjs.com/package/@frontify/app-bridge
     install: npm install @frontify/app-bridge
     version: 3.12.10
+    published: '2026-07-01'
     description: SDK to establish communication between a marketplace app and the Frontify platform.
     repo: https://github.com/Frontify/brand-sdk
     official: true
@@ -38,6 +50,8 @@ packages:
     name: "@frontify/app-bridge-app"
     url: https://www.npmjs.com/package/@frontify/app-bridge-app
     install: npm install @frontify/app-bridge-app
+    version: 0.3.0
+    published: '2026-06-11'
     description: App Bridge package for Frontify Platform Apps.
     repo: https://github.com/Frontify/brand-sdk
     official: true
@@ -46,6 +60,8 @@ packages:
     name: "@frontify/app-bridge-theme"
     url: https://www.npmjs.com/package/@frontify/app-bridge-theme
     install: npm install @frontify/app-bridge-theme
+    version: 1.2.0
+    published: '2026-07-06'
     description: App Bridge package to establish communication between Frontify and themes.
     repo: https://github.com/Frontify/brand-sdk
     official: true
@@ -54,7 +70,8 @@ packages:
     name: "@frontify/fondue"
     url: https://www.npmjs.com/package/@frontify/fondue
     install: npm install @frontify/fondue
-    version: 13.7.2
+    version: 13.7.5
+    published: '2026-08-11'
     description: Fondue, the design system of Frontify (React component library).
     repo: https://github.com/Frontify/fondue
     official: true
@@ -63,8 +80,20 @@ packages:
     name: "@frontify/fondue-sdk"
     url: https://www.npmjs.com/package/@frontify/fondue-sdk
     install: npm install @frontify/fondue-sdk
+    version: 0.2.0
+    published: '2026-07-20'
     description: Machine-readable SDK for Frontify Fondue — components, icons, tokens.
     repo: https://github.com/Frontify/fondue
+    official: true
+  - language: javascript
+    registry: npm
+    name: "@frontify/fondue-tokens"
+    url: https://www.npmjs.com/package/@frontify/fondue-tokens
+    install: npm install @frontify/fondue-tokens
+    version: 5.1.1
+    published: '2026-08-11'
+    description: Single source of truth for design tokens within the Fondue design system.
+    repo: https://github.com/Frontify/fondue-tokens
     official: true
   - language: javascript
     registry: npm
@@ -72,14 +101,20 @@ packages:
     url: https://www.npmjs.com/package/@frontify/frontify-uploader
     install: npm install @frontify/frontify-uploader
     version: 1.7.1
+    published: '2023-03-29'
     description: Tool that allows users to upload assets to a Frontify instance.
     official: true
+    decay_note: >-
+      Last published 2023-03-29 — over three years stale, and by far the oldest release
+      in the @frontify scope. The strongest abandonment signal in Frontify's package
+      surface.
   - language: typescript
     registry: npm
     name: "@frontify/frontify-cli"
     url: https://www.npmjs.com/package/@frontify/frontify-cli
     install: npm install -g @frontify/frontify-cli
-    version: 6.2.5
+    version: 6.2.6
+    published: '2026-07-22'
     description: Frontify CLI for serving, building and deploying Content Blocks / Platform Apps.
     repo: https://github.com/Frontify/brand-sdk
     official: true
@@ -88,7 +123,10 @@ packages:
     name: "@frontify/sanity-plugin-frontify"
     url: https://www.npmjs.com/package/@frontify/sanity-plugin-frontify
     install: npm install @frontify/sanity-plugin-frontify
+    version: 1.0.0
+    published: '2025-07-24'
     description: Connect Frontify Digital Asset Management to a Sanity Studio schema.
+    repo: https://github.com/Frontify/sanity-io-plugin
     official: true
   - language: javascript
     registry: npm
@@ -96,11 +134,26 @@ packages:
     url: https://www.npmjs.com/package/@frontify/n8n-nodes-frontify
     install: npm install @frontify/n8n-nodes-frontify
     version: 2.0.0
+    published: '2025-02-13'
     description: n8n community node for Frontify workflow automation.
     official: true
+currency_summary:
+  checked: '2026-08-13'
+  registry_metadata_endpoint: https://registry.npmjs.org/<package>
+  published_within_90_days: 6
+  published_within_1_year: 8
+  stale_over_2_years: 1
+  note: >-
+    The core developer surface (App Bridge, CLI, Fondue) is actively released — five
+    packages shipped within the last two months. The Uploader widget (2023) and the
+    Finder (2025-06) are the laggards, and Finder is the component most integrations
+    actually embed.
 notes: >-
-  Frontify's SDK surface is client-side / app-integration oriented (Brand SDK,
-  App Bridge, Finder, Authenticator, Fondue design system) rather than a
-  traditional server-side API client. The public API itself is GraphQL and is
-  called directly or via App Bridge. There is no first-party Python/Go/Ruby/PHP
-  server SDK on the public registries as of this pass.
+  Frontify's SDK surface is client-side / app-integration oriented (Brand SDK, App
+  Bridge, Finder, Authenticator, Fondue design system) rather than a traditional
+  server-side API client. The public API is GraphQL and is called directly — there is NO
+  first-party GraphQL client, and no Python/Go/Ruby/PHP/Java/.NET server SDK on any
+  public registry. A team integrating Frontify server-side writes raw GraphQL against
+  graphql/frontify.graphql. Community-published alternatives exist (e.g. `ffy-api-cli`,
+  "Agent-friendly CLI for the Frontify GraphQL API", authored by a Frontify employee but
+  outside the @frontify scope) and are not treated as first-party here.
