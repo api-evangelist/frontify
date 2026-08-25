@@ -5,7 +5,7 @@
       "source": "https://help.frontify.com/feed.xml",
       "feed_url": "https://help.frontify.com/feed.xml",
       "title": "",
-      "saved": 4,
+      "saved": 0,
       "method": "feed"
     },
     {
@@ -16,6 +16,6 @@
       "method": "discovered"
     }
   ],
-  "post_count": 29,
-  "fetched": "2026-08-15T12:11:08Z"
+  "post_count": 34,
+  "fetched": "2026-08-22T20:20:02Z"
 }
