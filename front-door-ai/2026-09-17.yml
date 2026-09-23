@@ -1,0 +1,29 @@
+# Front Door AI Index — frontify — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: frontify
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: www.frontify.com
+  final_host: www.frontify.com
+  ownership: own
+  owner: frontify
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 33
+  host_score: 33
+  density: 28.47
+  words: 1159
+  tiers:
+    agentic: 4
+    core: 29
+    model: 0
+  ambiguous: 9
+  top_terms:
+    AI: 29
+    intelligence: 6
+    agent: 3
+    AI agent: 2
+    MCP: 2
