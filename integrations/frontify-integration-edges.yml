@@ -1,0 +1,42 @@
+generated: '2026-10-15'
+edges:
+- partner_name: Contentful (own)
+  partner: contentful
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://www.contentful.com/marketplace/frontify/
+  mirror_of: contentful/integrations/contentful-integration-edges.yml
+  apps:
+  - Frontify
+  listing_count: 1
+  detected: '2026-10-15'
+  detected_by: mirror-platform-listings.py
+- partner_name: Sanity (own)
+  partner: sanity
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://www.sanity.io/plugins/frontify-dam
+  mirror_of: sanity/integrations/sanity-integration-edges.yml
+  apps:
+  - frontify-dam
+  listing_count: 1
+  detected: '2026-10-15'
+  detected_by: mirror-platform-listings.py
+  category: Sanity plugin
+method: searched
+checked:
+- contentful/integrations/contentful-integration-edges.yml
+- sanity/integrations/sanity-integration-edges.yml
+source:
+- contentful/integrations/contentful-integration-edges.yml
+- sanity/integrations/sanity-integration-edges.yml
