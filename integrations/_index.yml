@@ -26,7 +26,7 @@
     app_slug: frontify
     beta: false
     builder: unknown (not in the directory record)
-  status: pending-partner-spec
+  status: not-a-workflow
   arazzo: null
 - slug: frontify-n8n
   label: n8n
@@ -53,7 +53,7 @@
     published: '2025-02-13T08:13:34.365Z'
     matched_on: publisher-email
     builder: provider (package published from the provider's own domain)
-  status: pending-partner-spec
+  status: not-a-workflow
   arazzo: null
 - slug: frontify-contentful-own
   label: Contentful (own)
