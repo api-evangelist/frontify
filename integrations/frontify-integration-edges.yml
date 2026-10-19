@@ -85,10 +85,137 @@ edges:
   detected: '2026-10-15'
   detected_by: mirror-platform-listings.py
   category: Sanity plugin
+- partner_name: npm registry
+  partner: npm
+  partner_match: register
+  type: register
+  direction: provider-built
+  category: official SDK (JavaScript/TypeScript)
+  evidence: https://www.npmjs.com/package/@frontify/app-bridge
+  channel: package-registry
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: '@frontify/app-bridge'
+      version: 3.12.10
+      released: '2026-09-04'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/app-bridge
+      repo_leg: github-org:frontify
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/app-bridge-app'
+      version: 0.3.1
+      released: '2026-10-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/app-bridge-app
+      repo_leg: github-org:frontify
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/fondue'
+      version: 13.10.0
+      released: '2026-10-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/fondue
+      repo_leg: github-org:frontify
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/fondue-sdk'
+      version: 0.2.4
+      released: '2026-10-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/fondue-sdk
+      repo_leg: github-org:frontify
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/fondue-tokens'
+      version: 6.0.0-beta.0
+      released: '2026-10-08'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/fondue-tokens
+      repo_leg: github-org:frontify
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/frontify-authenticator'
+      version: 2.1.0
+      released: '2026-09-23'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/frontify-authenticator
+      repo_leg: domain:frontify.com
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/frontify-cli'
+      version: 6.4.2
+      released: '2026-10-14'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/frontify-cli
+      repo_leg: github-org:frontify
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/frontify-finder'
+      version: 3.0.5
+      released: '2026-09-22'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/frontify-finder
+      repo_leg: domain:frontify.com
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/frontify-uploader'
+      version: 1.7.1
+      released: '2024-11-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/frontify-uploader
+      repo_leg: github-org:frontify
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/n8n-nodes-frontify'
+      version: 2.0.0
+      released: '2025-02-13'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/n8n-nodes-frontify
+      repo_leg: github-org:frontify
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    - name: '@frontify/sanity-plugin-frontify'
+      version: 1.0.0
+      released: '2025-07-24'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@frontify/sanity-plugin-frontify
+      repo_leg: github-org:frontify
+      publisher_leg: email:frontify.com
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  detected_by: sweep-official-sdks.py
+  first_seen: '2026-10-18'
 method: searched
 checked:
 - contentful/integrations/contentful-integration-edges.yml
+- https://api.nuget.org/v3
+- https://crates.io/api/v1
+- https://proxy.golang.org
+- https://pypi.org/pypi
+- https://registry.npmjs.org
 - https://registry.npmjs.org/-/v1/search?text=keywords:n8n-community-node-package
+- https://repo1.maven.org/maven2
+- https://rubygems.org/api/v1
 - https://zapier.com/api/v4/apps/
 - sanity/integrations/sanity-integration-edges.yml
 source:
