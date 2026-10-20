@@ -52,39 +52,6 @@ edges:
     builder: provider (package published from the provider's own domain)
   detected_by: sweep-workflow-automation.py
   first_seen: '2026-10-15'
-- partner_name: Contentful (own)
-  partner: contentful
-  partner_match: mirror
-  mirror_match: domain
-  type: marketplace
-  relationship: platform-app
-  direction: third-party
-  channel: partner-built
-  marketplace: own
-  evidence: https://www.contentful.com/marketplace/frontify/
-  mirror_of: contentful/integrations/contentful-integration-edges.yml
-  apps:
-  - Frontify
-  listing_count: 1
-  detected: '2026-10-15'
-  detected_by: mirror-platform-listings.py
-- partner_name: Sanity (own)
-  partner: sanity
-  partner_match: mirror
-  mirror_match: domain
-  type: marketplace
-  relationship: platform-app
-  direction: third-party
-  channel: partner-built
-  marketplace: own
-  evidence: https://www.sanity.io/plugins/frontify-dam
-  mirror_of: sanity/integrations/sanity-integration-edges.yml
-  apps:
-  - frontify-dam
-  listing_count: 1
-  detected: '2026-10-15'
-  detected_by: mirror-platform-listings.py
-  category: Sanity plugin
 - partner_name: npm registry
   partner: npm
   partner_match: register
@@ -205,11 +172,76 @@ edges:
     detected: '2026-10-18'
   detected_by: sweep-official-sdks.py
   first_seen: '2026-10-18'
+- partner_name: Contentful (own)
+  partner: contentful
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://www.contentful.com/marketplace/frontify/
+  mirror_of: contentful/integrations/contentful-integration-edges.yml
+  apps:
+  - Frontify
+  listing_count: 1
+  detected: '2026-10-15'
+  detected_by: mirror-platform-listings.py
+- partner_name: Sanity (own)
+  partner: sanity
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://www.sanity.io/plugins/frontify-dam
+  mirror_of: sanity/integrations/sanity-integration-edges.yml
+  apps:
+  - frontify-dam
+  listing_count: 1
+  detected: '2026-10-15'
+  detected_by: mirror-platform-listings.py
+  category: Sanity plugin
+- partner_name: Cloud Security Alliance STAR Registry
+  partner: null
+  partner_match: register
+  type: register
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://cloudsecurityalliance.org/star/registry/frontify/services/frontify
+  category: Cloud security assurance
+  contract_reference:
+    register: CSA STAR Registry (cloudsecurityalliance.org/star/registry)
+    spec_file: null
+    standard: CSA STAR
+    role: star-level-1
+    registered_name: Frontify
+    registry_id: frontify
+    service_url: https://www.frontify.com/en/
+    matched_domain: frontify.com
+    matched_by: domain
+    identity_source: the service URL the organisation filed on its STAR listing (no lookup)
+    levels:
+    - STAR Level 1
+    certified_products: []
+    signal_note: STAR Level 1 (CAIQ self-assessment) = participation; certified_products = one entry per STAR Level
+      2 / STAR for AI Level 2 assessment TYPE (third-party certification, attestation, C-STAR, ValidAIted); lapsed
+      = every instance marked (Deprecated) by the registry; service counts never recorded
+    detected_by: sweep-compliance-assurance.py
+    detected: '2026-10-20'
+  detected_by: sweep-compliance-assurance.py
+  first_seen: '2026-10-20'
 method: searched
 checked:
 - contentful/integrations/contentful-integration-edges.yml
 - https://api.nuget.org/v3
+- https://cloudsecurityalliance.org/star/registry
 - https://crates.io/api/v1
+- https://eucoc.cloud/en/public-register/list-of-adherent-services
 - https://proxy.golang.org
 - https://pypi.org/pypi
 - https://registry.npmjs.org
