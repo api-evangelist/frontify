@@ -64,6 +64,130 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Frontify is a company surfaced as a portfolio company of eqt-ventures and added to the API Evangelist network as a stub for enrichment. Sector: marketing. This profile is a lead awaiting the enrichment pipeline.
+Frontify is a brand management and digital asset management (DAM) platform that gives teams a single, governed home for brand guidelines, logos, images, video, templates, and creative workflows. Its public developer surface is a per-instance GraphQL API (https://{instance}.frontify.com/graphql) for discovering brands, searching and retrieving assets, managing metadata, collaborating, browsing guidelines, exporting creative templates, and automating creative workflows, plus a Brand SDK (App Bridge, Frontify Finder, Frontify CLI) for building Content Blocks and Platform Apps, project-scoped webhooks across a 24-event vocabulary, an official hosted MCP server (54 tools in 10 role-scoped packs) for AI assistants, and a curated Agent Skills catalog. GraphQL introspection is open and unauthenticated, so the full schema is captured in this repository as the machine-readable contract; Frontify publishes no OpenAPI. Frontify was added to the API Evangelist network as a portfolio company of EQT Ventures and enriched here from its public developer, package, event, and trust surfaces.
 
-Backed by: eqt-ventures — https://www.frontify.com/
+**Areas:** Company · Marketing · Brand Management · Digital Asset Management · Content · GraphQL · Creative Operations
+
+## Frontify on APIs.io
+
+Everything profiled for Frontify is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/frontify/](https://apis.io/providers/frontify/)** — or go straight to one of the APIs or properties below.
+
+### APIs (1)
+
+- [Frontify GraphQL API](https://apis.io/apis/frontify/frontify-graphql-api/) — Per-instance GraphQL API for the Frontify brand management / DAM platform — discover brands, search and retrieve assets, manage metadata, collaborate on…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Frontify Webhooks](https://apis.io/asyncapis/frontify/frontify-webhooks/)
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Frontify MCP Server](https://apis.io/servers/frontify/frontify-mcp-server/)
+
+#### Security (4)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Frontify Authentication](https://apis.io/security/frontify/frontify-authentication/)
+- [Frontify Domain Security](https://apis.io/security/frontify/frontify-domain-security/)
+- [Frontify Trust Center](https://apis.io/security/frontify/frontify-trust-center/)
+- [Frontify Vulnerability Disclosure](https://apis.io/security/frontify/frontify-vulnerability-disclosure/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Frontify Scopes](https://apis.io/scopes/frontify/frontify-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Frontify Plans Pricing](https://apis.io/plans/frontify/frontify-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Frontify Rate Limits](https://apis.io/rate-limits/frontify/frontify-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.frontify.com/)
+- [Documentation](https://developer.frontify.com/)
+- [Getting started](https://help.frontify.com/en/articles/5402357-getting-started-with-the-frontify-graphql-api)
+- [API reference](https://frontify.github.io/graphql-reference/)
+- [Pricing](https://www.frontify.com/en/pricing/)
+- [Support](https://help.frontify.com/)
+- [Blog](https://www.frontify.com/en/resources/blog/)
+- [Security](https://www.frontify.com/en/security/)
+- [Compliance](https://trust.frontify.com/)
+- [Terms of service](https://www.frontify.com/en/legal/terms-of-service/)
+- [Privacy policy](https://www.frontify.com/en/legal/privacy-notice/)
+- [GitHub](https://github.com/Frontify)
+- [Status](https://status.frontify.com/)
+
+## API Evangelist rating
+
+**Kin Score 58.1** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 51.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 60.5 |
+| Developer ergonomics | 78.6 |
+| Access clarity | 46.1 |
+
+**Agent readiness 41.7** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | derived (partial credit) |
+| Agent Skills | yes |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | yes |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 40.2** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/frontify/](https://apis.io/providers/frontify/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Frontify: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/frontify/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
